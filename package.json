@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --env-file=.env --import tsx --test tests/**/*.test.ts",
-    "db:seed": "node --env-file=.env --import tsx prisma/seed.ts"
+    "db:seed": "node --env-file=.env --import tsx prisma/seed.ts",
+    "env:setup": "bash scripts/env-setup.sh",
+    "db:reset": "bash scripts/db-reset.sh",
+    "build:full": "bash scripts/build.sh",
+    "start:prod": "bash scripts/start.sh"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
