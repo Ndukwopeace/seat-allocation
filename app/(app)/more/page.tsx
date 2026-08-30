@@ -27,6 +27,14 @@ export default async function MorePage() {
         )}
         {session.role === "ADMIN" && (
           <Link
+            href="/admin/programs"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-base font-medium text-slate-900 shadow-sm active:scale-[0.99]"
+          >
+            Programs
+          </Link>
+        )}
+        {session.role === "ADMIN" && (
+          <Link
             href="/admin/users"
             className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-base font-medium text-slate-900 shadow-sm active:scale-[0.99]"
           >
