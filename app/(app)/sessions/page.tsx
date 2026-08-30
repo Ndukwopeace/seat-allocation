@@ -36,6 +36,7 @@ export default async function SessionsPage() {
   const todayStart = startOfTodayUTC();
   const rows = sessions.map((session) => ({
     id: session.id,
+    year: session.year,
     yearLabel: formatYear(session.year),
     label: session.label,
     dayKey: dayKeyFor(session.date),
@@ -47,7 +48,10 @@ export default async function SessionsPage() {
     isUpcoming: session.date >= todayStart,
   }));
 
-  const upcoming = rows.filter((r) => r.isUpcoming).reverse(); // soonest first
+  // Day ordering (soonest-first for upcoming, most-recent-first for past)
+  // and the within-day year/time sort both happen in SessionTabs, so these
+  // just need to be filtered, not pre-sorted.
+  const upcoming = rows.filter((r) => r.isUpcoming);
   const past = rows.filter((r) => !r.isUpcoming);
 
   return (

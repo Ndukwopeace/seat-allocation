@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 
 type SessionRow = {
   id: string;
+  year: string;
   yearLabel: string;
   label: string | null;
   dayKey: string;
@@ -21,6 +22,11 @@ type DayGroup = {
   sessions: SessionRow[];
 };
 
+// Groups same-day exams together and orders them by year, then by start
+// time within that year — otherwise same-day exams across different years
+// come back in whatever order the DB happens to return them in, which reads
+// as scattered rather than organized (e.g. Year 1 and Year 2 interleaved on
+// the same Monday).
 function groupByDay(rows: SessionRow[]): DayGroup[] {
   const groups = new Map<string, DayGroup>();
   for (const row of rows) {
@@ -30,6 +36,11 @@ function groupByDay(rows: SessionRow[]): DayGroup[] {
       groups.set(row.dayKey, group);
     }
     group.sessions.push(row);
+  }
+  for (const group of groups.values()) {
+    group.sessions.sort(
+      (a, b) => a.year.localeCompare(b.year) || a.startTime.localeCompare(b.startTime),
+    );
   }
   return [...groups.values()];
 }
@@ -59,7 +70,16 @@ export function SessionTabs({
   // A search implies "jump to the result" — keep every matching day expanded
   // instead of making the user open it after already narrowing the list.
   const hasQuery = query.trim() !== "";
-  const dayGroups = useMemo(() => groupByDay(filtered), [filtered]);
+  // Upcoming reads soonest-day-first; past reads most-recent-day-first —
+  // sorted explicitly here rather than relying on the incoming rows' order,
+  // since that order is unrelated to how days should be grouped and sorted.
+  const dayGroups = useMemo(() => {
+    const groups = groupByDay(filtered);
+    groups.sort((a, b) =>
+      tab === "upcoming" ? a.dayKey.localeCompare(b.dayKey) : b.dayKey.localeCompare(a.dayKey),
+    );
+    return groups;
+  }, [filtered, tab]);
 
   return (
     <div className="flex flex-col gap-3">
