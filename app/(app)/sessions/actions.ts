@@ -8,6 +8,7 @@ import { requireUser } from "@/lib/auth";
 import {
   generateInitialAllocation,
   regenerateAllocation,
+  deleteAllocationHistory,
   AllocationError,
 } from "@/lib/allocation";
 import {
@@ -15,6 +16,10 @@ import {
   removeParticipant,
   seedInitialParticipants,
 } from "@/lib/session-roster";
+import {
+  deleteExamSession as deleteExamSessionDomain,
+  SessionError,
+} from "@/lib/sessions";
 import { YearGroup } from "@/app/generated/prisma/enums";
 
 export type ActionState = { error?: string };
@@ -106,6 +111,7 @@ export async function removeParticipantAction(
 
 function messageFor(err: unknown): string {
   if (err instanceof AllocationError) return err.message;
+  if (err instanceof SessionError) return err.message;
   throw err;
 }
 
@@ -146,4 +152,34 @@ export async function regenerateAllocationAction(
   }
   revalidatePath(`/sessions/${examSessionId}`);
   return {};
+}
+
+// Admin-only, irreversible: wipes every allocation version/seat
+// assignment/audit entry for the session (lib/allocation.ts). The session
+// itself is untouched and can be generated again from scratch.
+export async function deleteAllocationAction(
+  examSessionId: string,
+): Promise<ActionState> {
+  await requireUser("ADMIN");
+  try {
+    await deleteAllocationHistory(examSessionId);
+  } catch (err) {
+    return { error: messageFor(err) };
+  }
+  revalidatePath(`/sessions/${examSessionId}`);
+  return {};
+}
+
+// Admin-only, irreversible: removes the session entirely. Blocked (see
+// lib/sessions.ts) if it has any allocation history — delete that first.
+export async function deleteExamSessionAction(
+  examSessionId: string,
+): Promise<ActionState> {
+  await requireUser("ADMIN");
+  try {
+    await deleteExamSessionDomain(examSessionId);
+  } catch (err) {
+    return { error: messageFor(err) };
+  }
+  redirect("/sessions");
 }

@@ -63,6 +63,19 @@ export function GenerateControls({
   const [confirmingGenerate, setConfirmingGenerate] = useState(false);
   const [confirmingRegenerate, setConfirmingRegenerate] = useState(false);
 
+  // hasAllocation flipping true -> false only happens from outside this
+  // component (Danger Zone's "Delete Allocation") — this component's own
+  // generate/regenerate flows only ever move it false -> true or bump the
+  // version while staying true. Clear a stale "just generated" banner
+  // rather than leaving it sitting next to a "Generate Allocation" button.
+  const wasAllocated = useRef(hasAllocation);
+  useEffect(() => {
+    if (wasAllocated.current && !hasAllocation) {
+      setFlash(null);
+    }
+    wasAllocated.current = hasAllocation;
+  }, [hasAllocation]);
+
   useSuccessFlash(genState, genPending, () => {
     setConfirmingGenerate(false);
     setFlash(

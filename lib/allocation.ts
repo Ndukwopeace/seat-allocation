@@ -354,3 +354,28 @@ export async function regenerateAllocation(
     fromVersion: currentVersion,
   });
 }
+
+/**
+ * Permanently erases every allocation version, seat assignment, and audit
+ * log entry for a session, reverting it to "not allocated" so it can be
+ * generated from scratch. Distinct from a regenerate (which supersedes the
+ * old version but keeps it for history) — this is a genuine undo, admin-only
+ * and irreversible. Also resets the invigilator's one-regeneration
+ * allowance for the session, since there's no longer any record it was used.
+ */
+export async function deleteAllocationHistory(examSessionId: string): Promise<void> {
+  await loadExamSessionOrThrow(examSessionId);
+
+  const allocations = await prisma.allocation.findMany({
+    where: { examSessionId },
+    select: { id: true },
+  });
+
+  await prisma.$transaction([
+    prisma.seatAssignment.deleteMany({
+      where: { allocationId: { in: allocations.map((a) => a.id) } },
+    }),
+    prisma.auditLog.deleteMany({ where: { examSessionId } }),
+    prisma.allocation.deleteMany({ where: { examSessionId } }),
+  ]);
+}

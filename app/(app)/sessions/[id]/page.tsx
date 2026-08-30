@@ -9,6 +9,7 @@ import { GenerateControls } from "./GenerateControls";
 import { AllocationList } from "./AllocationList";
 import { ExportPanel } from "./ExportPanel";
 import { ManageStudents } from "./ManageStudents";
+import { DangerZone } from "./DangerZone";
 
 export default async function SessionDetailPage(
   props: PageProps<"/sessions/[id]">,
@@ -141,6 +142,10 @@ export default async function SessionDetailPage(
       )}
 
       {allocation && <AllocationList examSessionId={id} rows={rows} />}
+
+      {user.role === "ADMIN" && (
+        <DangerZone examSessionId={id} hasAllocation={!!allocation} />
+      )}
     </main>
   );
 }
