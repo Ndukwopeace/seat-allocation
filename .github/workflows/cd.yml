@@ -75,10 +75,18 @@ jobs:
 #   VERCEL_PROJECT_ID       Same file, projectId
 #   PRODUCTION_DATABASE_URL Connection string for the PRODUCTION Postgres
 #                           (e.g. Neon/Supabase/Vercel Postgres) — this is
-#                           NOT the same database as local dev.
+#                           NOT the same database as local dev. If your
+#                           provider gives both a pooled and a direct/
+#                           unpooled connection string (Neon does), use the
+#                           DIRECT one here — migrations run better outside
+#                           a transaction-mode pooler.
 #
 # In the Vercel project itself (Settings -> Environment Variables), set for
 # the Production environment:
-#   DATABASE_URL      same value as PRODUCTION_DATABASE_URL above
-#   SESSION_SECRET     a long random value (e.g. `openssl rand -hex 32`) —
-#                      never reuse the local dev value from .env.example
+#   DATABASE_URL   the app's runtime connection string. If your provider
+#                  offers a pooled connection string, use that one here
+#                  instead of the direct one above — serverless functions
+#                  open a fresh DB connection per invocation, and a pooler
+#                  keeps that from exhausting Postgres' connection limit.
+#   SESSION_SECRET a long random value (e.g. `openssl rand -hex 32`) —
+#                  never reuse the local dev value from .env.example
