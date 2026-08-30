@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --env-file=.env --import tsx --test tests/**/*.test.ts",
+    "test": "node --env-file=.env --import tsx --test --test-concurrency=1 tests/**/*.test.ts",
     "db:seed": "node --env-file=.env --import tsx prisma/seed.ts",
     "env:setup": "bash scripts/env-setup.sh",
     "db:reset": "bash scripts/db-reset.sh",

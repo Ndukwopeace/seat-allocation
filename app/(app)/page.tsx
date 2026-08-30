@@ -14,12 +14,20 @@ export default async function DashboardPage() {
           Exam Sessions
         </Link>
         {session.role === "ADMIN" && (
-          <Link
-            href="/students"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-base font-medium text-slate-900 shadow-sm active:scale-[0.99]"
-          >
-            Students
-          </Link>
+          <>
+            <Link
+              href="/students"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-base font-medium text-slate-900 shadow-sm active:scale-[0.99]"
+            >
+              Students
+            </Link>
+            <Link
+              href="/admin/users"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-base font-medium text-slate-900 shadow-sm active:scale-[0.99]"
+            >
+              Users
+            </Link>
+          </>
         )}
       </nav>
     </main>

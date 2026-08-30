@@ -4,6 +4,7 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createSession, verifyPassword } from "@/lib/auth";
+import { safeNextPath } from "@/lib/safe-redirect";
 
 const loginSchema = z.object({
   email: z.string().trim().email(),
@@ -12,12 +13,6 @@ const loginSchema = z.object({
 });
 
 export type LoginState = { error?: string };
-
-function safeNextPath(next: string | undefined): string {
-  // Only allow same-site relative redirects, never an absolute/external URL.
-  if (next && next.startsWith("/") && !next.startsWith("//")) return next;
-  return "/";
-}
 
 export async function login(
   _prevState: LoginState,
@@ -33,10 +28,18 @@ export async function login(
     return { error: "Enter a valid email and password." };
   }
 
-  const { email, password, next } = parsed.data;
+  const { password, next } = parsed.data;
+  const email = parsed.data.email.toLowerCase();
 
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user || !(await verifyPassword(password, user.passwordHash))) {
+  // A null passwordHash means this account is Google-only — deliberately
+  // fails the same generic way as a wrong password, rather than revealing
+  // that the account exists but has no password.
+  if (
+    !user ||
+    !user.passwordHash ||
+    !(await verifyPassword(password, user.passwordHash))
+  ) {
     return { error: "Invalid email or password." };
   }
 
