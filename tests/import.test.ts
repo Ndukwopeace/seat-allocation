@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
-import { validateRows, type RawRow } from "../lib/import";
+import { beforeEach, after, describe, it } from "node:test";
+import { validateRows, commitImport, type RawRow } from "../lib/import";
+import { prisma } from "../lib/prisma";
+import { resetDb, makeProgram, makeExamSession } from "./helpers";
 
 const programs = new Map([
   ["software engineering", { id: "prog-swe", name: "Software Engineering" }],
@@ -132,5 +134,45 @@ describe("validateRows", () => {
       "YEAR_1",
     );
     assert.equal(validRows[0].matricNumber, "SIU25SWE001");
+  });
+});
+
+describe("commitImport", () => {
+  beforeEach(async () => {
+    await resetDb();
+  });
+
+  after(async () => {
+    await prisma.$disconnect();
+  });
+
+  it("adds newly-imported students to any existing session matching their year", async () => {
+    const program = await makeProgram("Software Engineering");
+    const sessionYear1 = await makeExamSession("YEAR_1");
+    const sessionYear2 = await makeExamSession("YEAR_2");
+
+    const { imported } = await commitImport([
+      {
+        rowNumber: 2,
+        matricNumber: "SIU25SWE100",
+        fullName: "New Student",
+        programId: program.id,
+        programName: program.name,
+        year: "YEAR_1",
+      },
+    ]);
+    assert.equal(imported, 1);
+
+    const student = await prisma.student.findUniqueOrThrow({
+      where: { matricNumber: "SIU25SWE100" },
+    });
+    const onYear1 = await prisma.sessionParticipant.findFirst({
+      where: { examSessionId: sessionYear1.id, studentId: student.id },
+    });
+    const onYear2 = await prisma.sessionParticipant.findFirst({
+      where: { examSessionId: sessionYear2.id, studentId: student.id },
+    });
+    assert.ok(onYear1, "added to the existing Year 1 session");
+    assert.equal(onYear2, null, "not added to the Year 2 session");
   });
 });

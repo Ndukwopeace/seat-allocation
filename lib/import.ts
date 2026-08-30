@@ -6,6 +6,7 @@ import { Readable } from "node:stream";
 import ExcelJS from "exceljs";
 import { prisma } from "./prisma";
 import { formatYear } from "./format";
+import { syncStudentsIntoMatchingSessions } from "./session-roster";
 import type { YearGroup } from "@/app/generated/prisma/enums";
 
 export class ImportError extends Error {}
@@ -278,6 +279,14 @@ export async function commitImport(
       year: r.year,
     })),
   });
+
+  // createMany doesn't return the created rows' generated ids, so fetch them
+  // back to sync into any session that already exists for their year.
+  const created = await prisma.student.findMany({
+    where: { matricNumber: { in: rows.map((r) => r.matricNumber) } },
+    select: { id: true, year: true },
+  });
+  await syncStudentsIntoMatchingSessions(created);
 
   return { imported: rows.length };
 }

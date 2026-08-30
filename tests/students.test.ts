@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { beforeEach, after, describe, it } from "node:test";
 import { prisma } from "../lib/prisma";
-import { deleteStudent } from "../lib/students";
+import { createStudent, deleteStudent, DuplicateMatricNumberError } from "../lib/students";
 import { generateInitialAllocation } from "../lib/allocation";
 import {
   resetDb,
@@ -81,5 +81,72 @@ describe("deleteStudent", () => {
       where: { examSessionId: sessionB.id, studentId: target.id },
     });
     assert.equal(stillOnSessionB, null);
+  });
+});
+
+describe("createStudent", () => {
+  beforeEach(async () => {
+    await resetDb();
+  });
+
+  after(async () => {
+    await prisma.$disconnect();
+  });
+
+  it("creates a student, normalizing the matric number and trimming the name", async () => {
+    const program = await makeProgram("Business");
+
+    const student = await createStudent({
+      matricNumber: " siu25bus099 ",
+      fullName: "  New Student  ",
+      programId: program.id,
+      year: "YEAR_1",
+    });
+
+    assert.equal(student.matricNumber, "SIU25BUS099");
+    assert.equal(student.fullName, "New Student");
+  });
+
+  it("rejects a duplicate matric number", async () => {
+    const program = await makeProgram("Business");
+    await createStudent({
+      matricNumber: "SIU25BUS001",
+      fullName: "First",
+      programId: program.id,
+      year: "YEAR_1",
+    });
+
+    await assert.rejects(
+      () =>
+        createStudent({
+          matricNumber: "siu25bus001",
+          fullName: "Second",
+          programId: program.id,
+          year: "YEAR_1",
+        }),
+      DuplicateMatricNumberError,
+    );
+  });
+
+  it("adds the new student to every existing session already matching their year", async () => {
+    const program = await makeProgram("Business");
+    const sessionYear1 = await makeExamSession("YEAR_1");
+    const sessionYear2 = await makeExamSession("YEAR_2");
+
+    const student = await createStudent({
+      matricNumber: "SIU25BUS002",
+      fullName: "Late Arrival",
+      programId: program.id,
+      year: "YEAR_1",
+    });
+
+    const onYear1 = await prisma.sessionParticipant.findFirst({
+      where: { examSessionId: sessionYear1.id, studentId: student.id },
+    });
+    const onYear2 = await prisma.sessionParticipant.findFirst({
+      where: { examSessionId: sessionYear2.id, studentId: student.id },
+    });
+    assert.ok(onYear1, "added to the existing Year 1 session");
+    assert.equal(onYear2, null, "not added to the Year 2 session");
   });
 });

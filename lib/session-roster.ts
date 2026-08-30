@@ -21,6 +21,38 @@ export async function seedInitialParticipants(examSessionId: string, year: YearG
   });
 }
 
+/**
+ * Adds newly-created students to every *existing* session sharing their
+ * year — without this, a student imported or manually added after a
+ * matching-year session was created would never appear on that session's
+ * roster at all (rosters are only seeded from the year cohort once, at
+ * session-creation time). Mirrors seedInitialParticipants's default, just
+ * running in the other direction (new student -> existing sessions instead
+ * of new session -> existing students). Safe to call for students whose
+ * year has no sessions yet — it's just a no-op then.
+ */
+export async function syncStudentsIntoMatchingSessions(
+  students: { id: string; year: YearGroup }[],
+) {
+  if (students.length === 0) return;
+
+  const years = [...new Set(students.map((s) => s.year))];
+  const sessions = await prisma.examSession.findMany({
+    where: { year: { in: years } },
+    select: { id: true, year: true },
+  });
+  if (sessions.length === 0) return;
+
+  const data = students.flatMap((student) =>
+    sessions
+      .filter((session) => session.year === student.year)
+      .map((session) => ({ examSessionId: session.id, studentId: student.id })),
+  );
+  if (data.length === 0) return;
+
+  await prisma.sessionParticipant.createMany({ data, skipDuplicates: true });
+}
+
 export async function listParticipants(examSessionId: string) {
   const participants = await prisma.sessionParticipant.findMany({
     where: { examSessionId },

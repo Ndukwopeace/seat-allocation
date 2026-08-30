@@ -3,15 +3,19 @@ import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatYear } from "@/lib/format";
 import { StudentSearch } from "./StudentSearch";
+import { AddStudentForm } from "./AddStudentForm";
 
 export default async function StudentsPage() {
   await requireUser("ADMIN");
 
-  const students = await prisma.student.findMany({
-    where: { archivedAt: null },
-    orderBy: [{ year: "asc" }, { matricNumber: "asc" }],
-    include: { program: true },
-  });
+  const [students, programs] = await Promise.all([
+    prisma.student.findMany({
+      where: { archivedAt: null },
+      orderBy: [{ year: "asc" }, { matricNumber: "asc" }],
+      include: { program: true },
+    }),
+    prisma.program.findMany({ orderBy: { name: "asc" } }),
+  ]);
 
   const rows = students.map((s) => ({
     id: s.id,
@@ -36,6 +40,8 @@ export default async function StudentsPage() {
       >
         + Import Students
       </Link>
+
+      <AddStudentForm programs={programs} />
 
       <StudentSearch rows={rows} />
     </main>
