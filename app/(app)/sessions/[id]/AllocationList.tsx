@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 type Row = {
+  studentId: string;
   seatNumber: number;
   matricNumber: string;
   fullName: string;
@@ -11,7 +13,13 @@ type Row = {
 
 type SortKey = "seatNumber" | "matricNumber" | "fullName" | "program";
 
-export function AllocationList({ rows }: { rows: Row[] }) {
+export function AllocationList({
+  examSessionId,
+  rows,
+}: {
+  examSessionId: string;
+  rows: Row[];
+}) {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("seatNumber");
 
@@ -75,19 +83,21 @@ export function AllocationList({ rows }: { rows: Row[] }) {
       {/* Mobile: cards. Seat number is the dominant element (FR-VIEW-06). */}
       <ul className="flex flex-col gap-2 sm:hidden">
         {filtered.map((r) => (
-          <li
-            key={r.matricNumber}
-            className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
-          >
-            <span className="flex h-12 w-12 flex-none items-center justify-center rounded-lg bg-slate-900 text-lg font-bold text-white">
-              {r.seatNumber}
-            </span>
-            <div className="min-w-0">
-              <p className="truncate font-medium text-slate-900">{r.fullName}</p>
-              <p className="truncate text-sm text-slate-500">
-                {r.matricNumber} · {r.program}
-              </p>
-            </div>
+          <li key={r.matricNumber}>
+            <Link
+              href={`/sessions/${examSessionId}/students/${r.studentId}`}
+              className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm active:scale-[0.99]"
+            >
+              <span className="flex h-12 w-12 flex-none items-center justify-center rounded-lg bg-slate-900 text-lg font-bold text-white">
+                {r.seatNumber}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate font-medium text-slate-900">{r.fullName}</p>
+                <p className="truncate text-sm text-slate-500">
+                  {r.matricNumber} · {r.program}
+                </p>
+              </div>
+            </Link>
           </li>
         ))}
       </ul>
@@ -101,6 +111,7 @@ export function AllocationList({ rows }: { rows: Row[] }) {
               <th className="px-4 py-2">Matric No.</th>
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Program</th>
+              <th className="px-4 py-2" />
             </tr>
           </thead>
           <tbody>
@@ -112,6 +123,14 @@ export function AllocationList({ rows }: { rows: Row[] }) {
                 <td className="px-4 py-2">{r.matricNumber}</td>
                 <td className="px-4 py-2">{r.fullName}</td>
                 <td className="px-4 py-2">{r.program}</td>
+                <td className="px-4 py-2 text-right">
+                  <Link
+                    href={`/sessions/${examSessionId}/students/${r.studentId}`}
+                    className="text-slate-500 underline"
+                  >
+                    View
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
