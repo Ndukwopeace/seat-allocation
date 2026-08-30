@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { Spinner } from "@/app/Spinner";
 import {
   generateAllocationAction,
   regenerateAllocationAction,
@@ -130,8 +131,9 @@ export function GenerateControls({
               <button
                 type="submit"
                 disabled={genPending}
-                className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
+                {genPending && <Spinner />}
                 {genPending ? "Generating…" : "Yes, generate"}
               </button>
             </div>
@@ -209,8 +211,9 @@ export function GenerateControls({
               <button
                 type="submit"
                 disabled={regenPending}
-                className="flex-1 rounded-lg bg-amber-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
+                {regenPending && <Spinner />}
                 {regenPending ? "Regenerating…" : "Yes, regenerate"}
               </button>
             </div>

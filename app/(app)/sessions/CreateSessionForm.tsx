@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { Spinner } from "@/app/Spinner";
 import { createExamSession, type ActionState } from "./actions";
 
 const initialState: ActionState = {};
@@ -112,8 +113,9 @@ export function CreateSessionForm() {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-slate-900 px-4 py-3 text-base font-semibold text-white disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-base font-semibold text-white disabled:opacity-60"
         >
+          {pending && <Spinner />}
           {pending ? "Creating…" : "Create session"}
         </button>
       </form>

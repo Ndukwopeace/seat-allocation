@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useState, useTransition } from "react";
+import { Spinner } from "@/app/Spinner";
 import {
   previewImport,
   confirmImportAction,
@@ -133,8 +134,9 @@ export function ImportFlow() {
             type="button"
             onClick={handleConfirm}
             disabled={confirmPending || result.validRows.length === 0}
-            className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
           >
+            {confirmPending && <Spinner />}
             {confirmPending
               ? "Importing…"
               : `Confirm Import (${result.validRows.length})`}
@@ -186,7 +188,10 @@ export function ImportFlow() {
       )}
 
       {previewPending && (
-        <p className="text-center text-sm text-slate-500">Validating file…</p>
+        <p className="flex items-center justify-center gap-2 text-center text-sm text-slate-500">
+          <Spinner />
+          Validating file…
+        </p>
       )}
     </form>
   );

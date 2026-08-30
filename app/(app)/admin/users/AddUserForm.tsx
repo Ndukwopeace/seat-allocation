@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { Spinner } from "@/app/Spinner";
 import { createUser, type ActionState } from "./actions";
 
 const initialState: ActionState = {};
@@ -104,8 +105,9 @@ export function AddUserForm() {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-slate-900 px-4 py-3 text-base font-semibold text-white disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-base font-semibold text-white disabled:opacity-60"
         >
+          {pending && <Spinner />}
           {pending ? "Adding…" : "Add user"}
         </button>
       </form>
