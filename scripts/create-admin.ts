@@ -21,7 +21,9 @@ async function main() {
 
   try {
     const user = await createUser({
-      name: name ?? email,
+      // `name || email`, not `??` — an unfilled optional GitHub Actions
+      // input arrives as an empty string, not undefined.
+      name: name || email,
       email,
       role: "ADMIN",
     });

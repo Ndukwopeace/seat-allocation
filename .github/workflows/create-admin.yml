@@ -1,0 +1,46 @@
+name: Create admin
+
+# Manual, one-off bootstrap: creates a Google-only ADMIN user directly in
+# production. Only needed the first time (before any admin account exists) —
+# after that, use the in-app /admin/users page instead.
+#
+# Run it from the Actions tab: select "Create admin" -> "Run workflow" ->
+# fill in the email (and optionally a name) -> Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: "Email of the account to make admin"
+        required: true
+      name:
+        description: "Display name (defaults to the email)"
+        required: false
+
+jobs:
+  create-admin:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create admin
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          ADMIN_EMAIL: ${{ inputs.email }}
+          ADMIN_NAME: ${{ inputs.name }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::PRODUCTION_DATABASE_URL secret is not set."
+            exit 1
+          fi
+          node --import tsx scripts/create-admin.ts "$ADMIN_EMAIL" "$ADMIN_NAME"
