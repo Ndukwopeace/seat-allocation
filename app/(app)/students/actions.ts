@@ -26,9 +26,9 @@ export async function deleteStudentAction(studentId: string): Promise<DeleteStud
 export type CreateStudentState = { error?: string; success?: boolean };
 
 const createStudentSchema = z.object({
-  matricNumber: z.string().trim().min(1, "Matric number is required").max(50),
+  matricNumber: z.string().trim().min(1, "Student ID is required").max(50),
   fullName: z.string().trim().min(1, "Full name is required").max(200),
-  programId: z.string().min(1, "Choose a program"),
+  programId: z.string().min(1, "Choose a course"),
   year: z.enum(YearGroup),
 });
 
@@ -45,7 +45,7 @@ export async function createStudentAction(
     year: formData.get("year"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid student details." };
+    return { error: parsed.error.issues[0]?.message ?? "Check the student details." };
   }
 
   try {

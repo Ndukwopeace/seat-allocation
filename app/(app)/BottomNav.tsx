@@ -50,7 +50,7 @@ const TABS: Record<Role, Tab[]> = {
     },
     {
       href: "/sessions",
-      label: "Sessions",
+      label: "Exams",
       match: (p) => p.startsWith("/sessions"),
       icon: () => (
         <svg {...ICON_PROPS}>
@@ -85,7 +85,7 @@ const TABS: Record<Role, Tab[]> = {
     },
     {
       href: "/sessions",
-      label: "Sessions",
+      label: "Exams",
       match: (p) => p.startsWith("/sessions"),
       icon: () => (
         <svg {...ICON_PROPS}>

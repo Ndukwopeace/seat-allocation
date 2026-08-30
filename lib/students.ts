@@ -6,7 +6,7 @@ import type { YearGroup } from "@/app/generated/prisma/enums";
 
 export class DuplicateMatricNumberError extends Error {
   constructor(matricNumber: string) {
-    super(`Matric number ${matricNumber} is already registered.`);
+    super(`Student ID ${matricNumber} is already used.`);
   }
 }
 

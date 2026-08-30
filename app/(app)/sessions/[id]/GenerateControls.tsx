@@ -79,12 +79,12 @@ export function GenerateControls({
   useSuccessFlash(genState, genPending, () => {
     setConfirmingGenerate(false);
     setFlash(
-      `Allocation generated — version ${currentVersion} is now active. Every registered student has a seat number.`,
+      `Seat list ready — v${currentVersion}. Every student now has a seat number.`,
     );
   });
   useSuccessFlash(regenState, regenPending, () => {
     setConfirmingRegenerate(false);
-    setFlash(`Reallocated — version ${currentVersion} is now active.`);
+    setFlash(`New seat list ready — v${currentVersion}.`);
   });
 
   const banner = flash && (
@@ -117,7 +117,7 @@ export function GenerateControls({
             }}
             className="w-full rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white active:scale-[0.98]"
           >
-            Generate Allocation
+            Make Seat List
           </button>
         ) : (
           <form
@@ -125,8 +125,8 @@ export function GenerateControls({
             className="flex flex-col gap-3 rounded-3xl border border-hairline bg-mist p-4"
           >
             <p className="text-sm text-ink/80">
-              This assigns a random, unique seat number to every registered
-              student in this session. Continue?
+              This gives a random seat number to every student in this exam.
+              Continue?
             </p>
             {genState.error && (
               <p role="alert" className="text-sm text-red-600">
@@ -147,7 +147,7 @@ export function GenerateControls({
                 className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 {genPending && <Spinner />}
-                {genPending ? "Generating…" : "Yes, generate"}
+                {genPending ? "Making…" : "Yes, make it"}
               </button>
             </div>
           </form>
@@ -165,8 +165,8 @@ export function GenerateControls({
       {userRole === "INVIGILATOR" && (
         <p className="text-sm text-muted">
           {invigilatorRegenerationAvailable
-            ? "You have 1 regeneration remaining for this session."
-            : "You've used your one regeneration for this session. An admin can override with a reason."}
+            ? "You can make 1 new seat list for this exam."
+            : "You've already made a new seat list for this exam. An admin can make another, with a reason."}
         </p>
       )}
       {canRegenerate &&
@@ -179,7 +179,7 @@ export function GenerateControls({
             }}
             className="w-full rounded-full border-2 border-mesh-black px-4 py-3 text-base font-semibold text-mesh-black active:scale-[0.98]"
           >
-            {requireReason ? "Regenerate (Admin Override)" : "Regenerate Allocation"}
+            {requireReason ? "Make New List (Admin)" : "Make New List"}
           </button>
         ) : (
           <form
@@ -187,9 +187,9 @@ export function GenerateControls({
             className="flex flex-col gap-3 rounded-3xl border border-amber-300 bg-amber-50 p-4"
           >
             <p className="text-sm text-ink/80">
-              This replaces the current version {currentVersion} allocation
-              with a new version {currentVersion + 1}. Every student gets a
-              new number. This cannot be undone.
+              This makes a new seat list (v{currentVersion + 1}) instead of
+              the current one (v{currentVersion}). Every student gets a new
+              seat number. You cannot undo this.
             </p>
             {requireReason && (
               <div className="flex flex-col gap-1.5">
@@ -197,7 +197,7 @@ export function GenerateControls({
                   htmlFor="reason"
                   className="text-sm font-medium text-ink"
                 >
-                  Reason (required, will be logged)
+                  Reason (you must give one — it will be saved)
                 </label>
                 <textarea
                   id="reason"
@@ -227,7 +227,7 @@ export function GenerateControls({
                 className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-amber-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 {regenPending && <Spinner />}
-                {regenPending ? "Regenerating…" : "Yes, regenerate"}
+                {regenPending ? "Making…" : "Yes, make new list"}
               </button>
             </div>
           </form>

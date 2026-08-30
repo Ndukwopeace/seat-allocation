@@ -30,8 +30,8 @@ export default async function SeatSearchPage() {
         </Link>
       </div>
       <p className="text-sm text-muted">
-        Find a student&rsquo;s seat by name, matric number, or seat number —
-        across every allocated session.
+        Find a student&rsquo;s seat by name, student ID, or seat number —
+        across every exam.
       </p>
 
       <SeatSearch rows={rows} />

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
+import { formatRole } from "@/lib/format";
 import { logout } from "@/app/actions";
 
 export default async function MorePage() {
@@ -12,7 +13,7 @@ export default async function MorePage() {
         <p className="font-display font-medium text-ink">{session.name}</p>
         <p className="text-sm text-muted">{session.email}</p>
         <span className="mt-2 inline-block rounded-full bg-mist px-2 py-0.5 text-xs font-medium text-muted">
-          {session.role}
+          {formatRole(session.role)}
         </span>
       </div>
 
@@ -30,7 +31,7 @@ export default async function MorePage() {
             href="/admin/programs"
             className="rounded-2xl border border-hairline bg-white px-4 py-4 text-base font-medium text-ink shadow-sm active:scale-[0.98]"
           >
-            Programs
+            Courses
           </Link>
         )}
         {session.role === "ADMIN" && (

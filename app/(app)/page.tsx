@@ -72,25 +72,25 @@ export default async function DashboardPage() {
             <StatCard
               label="Today's Exams"
               value={todaysSessions.length}
-              sublabel={todaysSessions.length === 1 ? "Session" : "Sessions"}
+              sublabel={todaysSessions.length === 1 ? "Exam" : "Exams"}
             />
             <StatCard
-              label="Allocations Done"
+              label="Seat Lists Ready"
               value={todaysAllocatedCount}
-              sublabel={todaysAllocatedCount === 1 ? "Session" : "Sessions"}
+              sublabel={todaysAllocatedCount === 1 ? "Exam" : "Exams"}
             />
             <StatCard
-              label="Pending Allocation"
+              label="Seat Lists Waiting"
               value={todaysPendingCount}
-              sublabel={todaysPendingCount === 1 ? "Session" : "Sessions"}
+              sublabel={todaysPendingCount === 1 ? "Exam" : "Exams"}
             />
           </>
         ) : (
           <>
             <StatCard
-              label="Today's Sessions"
+              label="Today's Exams"
               value={todaysSessions.length}
-              sublabel={todaysSessions.length === 1 ? "Session" : "Sessions"}
+              sublabel={todaysSessions.length === 1 ? "Exam" : "Exams"}
             />
             <StatCard
               label="Students Today"
@@ -106,7 +106,7 @@ export default async function DashboardPage() {
       <div>
         <div className="mb-2 flex items-center justify-between">
           <h2 className="font-display text-base font-medium text-ink">
-            {session.role === "ADMIN" ? "Today's Sessions" : "My Sessions"}
+            {session.role === "ADMIN" ? "Today's Exams" : "My Exams"}
           </h2>
           <Link href="/sessions" className="text-sm text-muted">
             View all
@@ -115,7 +115,7 @@ export default async function DashboardPage() {
 
         {todaysSessions.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
-            No exam sessions today.
+            No exams today.
           </p>
         ) : (
           <ul className="flex flex-col gap-2">
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
                           : "bg-emerald-100 text-emerald-700"
                       }`}
                     >
-                      {version === 0 ? "Pending" : "Allocated"}
+                      {version === 0 ? "Waiting" : "Seats ready"}
                     </span>
                   </Link>
                 </li>

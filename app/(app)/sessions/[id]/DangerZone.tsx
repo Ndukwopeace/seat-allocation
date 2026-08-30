@@ -20,7 +20,7 @@ export function DangerZone({
   return (
     <details className="rounded-3xl border border-red-200 bg-white shadow-sm">
       <summary className="cursor-pointer px-4 py-4 text-base font-medium text-red-700">
-        Danger Zone
+        Delete area
       </summary>
       <div className="flex flex-col gap-3 px-4 pb-4">
         {hasAllocation && <DeleteAllocationButton examSessionId={examSessionId} />}
@@ -45,7 +45,7 @@ function DeleteAllocationButton({ examSessionId }: { examSessionId: string }) {
         onClick={() => setConfirming(true)}
         className="w-full rounded-full border border-red-300 px-4 py-3 text-sm font-semibold text-red-700 active:scale-[0.98]"
       >
-        Delete Allocation
+        Delete Seat List
       </button>
     );
   }
@@ -56,10 +56,9 @@ function DeleteAllocationButton({ examSessionId }: { examSessionId: string }) {
       className="flex flex-col gap-3 rounded-3xl border border-red-300 bg-red-50 p-4"
     >
       <p className="text-sm text-ink/80">
-        This permanently erases every generated version of this
-        session&rsquo;s allocation — every seat assignment and its audit
-        history. The session itself stays and can be allocated again from
-        scratch. This cannot be undone.
+        This removes every seat list ever made for this exam — every seat
+        number and its history. The exam itself stays, and you can make a
+        new seat list any time. You cannot undo this.
       </p>
       {state.error && (
         <p role="alert" className="text-sm text-red-600">
@@ -80,7 +79,7 @@ function DeleteAllocationButton({ examSessionId }: { examSessionId: string }) {
           className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
         >
           {pending && <Spinner />}
-          {pending ? "Deleting…" : "Yes, delete allocation"}
+          {pending ? "Deleting…" : "Yes, delete seat list"}
         </button>
       </div>
     </form>
@@ -101,9 +100,8 @@ function DeleteSessionButton({
   if (hasAllocation) {
     return (
       <p className="rounded-2xl border border-dashed border-hairline px-3 py-3 text-xs text-muted">
-        This session has allocation history, so it can&rsquo;t be deleted.
-        Delete its allocation first if you want to remove the session
-        entirely.
+        This exam has a seat list, so you can&rsquo;t delete it yet. Delete
+        the seat list first, then you can delete the exam.
       </p>
     );
   }
@@ -115,7 +113,7 @@ function DeleteSessionButton({
         onClick={() => setConfirming(true)}
         className="w-full rounded-full bg-red-600 px-4 py-3 text-sm font-semibold text-white active:scale-[0.98]"
       >
-        Delete Session
+        Delete Exam
       </button>
     );
   }
@@ -126,7 +124,7 @@ function DeleteSessionButton({
       className="flex flex-col gap-3 rounded-3xl border border-red-300 bg-red-50 p-4"
     >
       <p className="text-sm text-ink/80">
-        This permanently removes this exam session. This cannot be undone.
+        This removes this exam for good. You cannot undo this.
       </p>
       {state.error && (
         <p role="alert" className="text-sm text-red-600">
@@ -147,7 +145,7 @@ function DeleteSessionButton({
           className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
         >
           {pending && <Spinner />}
-          {pending ? "Deleting…" : "Yes, delete session"}
+          {pending ? "Deleting…" : "Yes, delete exam"}
         </button>
       </div>
     </form>

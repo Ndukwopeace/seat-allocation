@@ -6,7 +6,7 @@ export class ProgramError extends Error {}
 
 export class DuplicateProgramError extends ProgramError {
   constructor() {
-    super("A program with this name already exists.");
+    super("A course with this name already exists.");
   }
 }
 

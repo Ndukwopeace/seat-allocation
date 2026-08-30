@@ -44,11 +44,11 @@ export function AllocationList({
     <div className="flex flex-col gap-3">
       <input
         type="search"
-        placeholder="Search matric number, name or seat number"
+        placeholder="Search student ID, name or seat number"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
-        aria-label="Search allocation list"
+        aria-label="Search seat list"
       />
 
       <div className="flex flex-wrap gap-2 text-sm">
@@ -56,9 +56,9 @@ export function AllocationList({
         {(
           [
             ["seatNumber", "Seat"],
-            ["matricNumber", "Matric No."],
+            ["matricNumber", "Student ID"],
             ["fullName", "Name"],
-            ["program", "Program"],
+            ["program", "Course"],
           ] as [SortKey, string][]
         ).map(([key, label]) => (
           <button
@@ -109,9 +109,9 @@ export function AllocationList({
           <thead className="bg-mist text-ink/70">
             <tr>
               <th className="px-4 py-2">Seat</th>
-              <th className="px-4 py-2">Matric No.</th>
+              <th className="px-4 py-2">Student ID</th>
               <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Program</th>
+              <th className="px-4 py-2">Course</th>
               <th className="px-4 py-2" />
             </tr>
           </thead>

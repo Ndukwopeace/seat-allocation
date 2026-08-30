@@ -26,7 +26,7 @@ export default async function LoginPage(props: PageProps<"/login">) {
             Sign in to continue
           </h1>
           <p className="mt-1.5 text-sm text-muted">
-            SIU Exam Seat Allocation
+            QuickSeat
           </p>
         </div>
 

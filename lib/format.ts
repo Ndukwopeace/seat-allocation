@@ -1,4 +1,13 @@
-import type { YearGroup } from "@/app/generated/prisma/enums";
+import type { Role, YearGroup } from "@/app/generated/prisma/enums";
+
+const ROLE_LABELS: Record<Role, string> = {
+  ADMIN: "Admin",
+  INVIGILATOR: "Exam helper",
+};
+
+export function formatRole(role: Role): string {
+  return ROLE_LABELS[role];
+}
 
 const YEAR_LABELS: Record<YearGroup, string> = {
   YEAR_1: "Year 1",

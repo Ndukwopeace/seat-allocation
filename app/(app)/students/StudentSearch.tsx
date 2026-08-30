@@ -66,7 +66,7 @@ export function StudentSearch({ rows }: { rows: Row[] }) {
     <div className="flex flex-col gap-3">
       <input
         type="search"
-        placeholder="Search by name, matric number, or program"
+        placeholder="Search by name, student ID, or course"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
@@ -110,8 +110,8 @@ export function StudentSearch({ rows }: { rows: Row[] }) {
                     >
                       <p className="text-sm text-ink/80">
                         Remove <span className="font-medium">{s.fullName}</span>{" "}
-                        from the registry? This can&rsquo;t be undone for a
-                        student with no allocation history.
+                        from the list? This can&rsquo;t be undone for a
+                        student with no seat list history.
                       </p>
                       <div className="flex gap-2">
                         <button

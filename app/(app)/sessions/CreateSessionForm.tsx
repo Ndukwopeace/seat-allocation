@@ -16,7 +16,7 @@ export function CreateSessionForm() {
   return (
     <details className="rounded-3xl border border-hairline bg-white shadow-sm">
       <summary className="cursor-pointer px-4 py-4 text-base font-medium text-ink">
-        + New exam session
+        + New exam
       </summary>
       <form action={formAction} className="flex flex-col gap-4 px-4 pb-4">
         <div className="flex flex-col gap-1.5">
@@ -109,7 +109,7 @@ export function CreateSessionForm() {
           className="inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60"
         >
           {pending && <Spinner />}
-          {pending ? "Creating…" : "Create session"}
+          {pending ? "Creating…" : "Create exam"}
         </button>
       </form>
     </details>

@@ -68,7 +68,7 @@ export function AddUserForm() {
             defaultValue="INVIGILATOR"
             className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
           >
-            <option value="INVIGILATOR">Invigilator</option>
+            <option value="INVIGILATOR">Exam helper</option>
             <option value="ADMIN">Admin</option>
           </select>
         </div>

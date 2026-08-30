@@ -30,7 +30,7 @@ export default async function StudentsPage() {
       <div>
         <h1 className="font-display text-xl font-medium text-ink">Students</h1>
         <p className="text-sm text-muted">
-          {students.length} registered student{students.length === 1 ? "" : "s"}
+          {students.length} student{students.length === 1 ? "" : "s"}
         </p>
       </div>
 

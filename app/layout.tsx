@@ -22,8 +22,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SIU Exam Seat Allocation",
-  description: "Randomized exam seat allocation for SIU exam sessions",
+  title: "QuickSeat",
+  description: "QuickSeat gives every SIU student a fair, random seat number for their exam.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -8,7 +8,7 @@ import { createProgram as createProgramDomain, DuplicateProgramError } from "@/l
 export type ActionState = { error?: string; success?: boolean };
 
 const createProgramSchema = z.object({
-  name: z.string().trim().min(1, "Program name is required").max(200),
+  name: z.string().trim().min(1, "Course name is required").max(200),
 });
 
 export async function createProgram(
@@ -19,7 +19,7 @@ export async function createProgram(
 
   const parsed = createProgramSchema.safeParse({ name: formData.get("name") });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid program name." };
+    return { error: parsed.error.issues[0]?.message ?? "Check the course name." };
   }
 
   try {

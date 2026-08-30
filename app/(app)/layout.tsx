@@ -13,7 +13,7 @@ export default async function AppLayout({
     <div className="flex flex-1 flex-col">
       <header className="flex items-center justify-between border-b border-hairline bg-white px-4 py-3 sm:px-6">
         <span className="font-display text-base font-medium tracking-tight text-ink">
-          SIU Exam Seat Allocation
+          QuickSeat
         </span>
         <form action={logout}>
           <button

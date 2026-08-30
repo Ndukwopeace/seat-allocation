@@ -12,14 +12,14 @@ export function ExportPanel({ examSessionId }: { examSessionId: string }) {
         onClick={() => setOpen(true)}
         className="w-full rounded-full border border-hairline px-4 py-3 text-base font-medium text-ink active:scale-[0.98]"
       >
-        Export
+        Download
       </button>
     );
   }
 
   return (
     <div className="flex flex-col gap-3 rounded-3xl border border-hairline bg-white p-4 shadow-sm">
-      <p className="text-sm font-medium text-ink">Choose export format</p>
+      <p className="text-sm font-medium text-ink">Choose a file type</p>
       <a
         href={`/sessions/${examSessionId}/export?format=pdf`}
         className="flex items-center gap-3 rounded-2xl border border-hairline px-4 py-3 text-sm font-medium text-ink active:scale-[0.98]"
@@ -27,7 +27,7 @@ export function ExportPanel({ examSessionId }: { examSessionId: string }) {
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-100 text-red-600">
           PDF
         </span>
-        PDF Document
+        PDF File
       </a>
       <a
         href={`/sessions/${examSessionId}/export?format=excel`}
@@ -36,7 +36,7 @@ export function ExportPanel({ examSessionId }: { examSessionId: string }) {
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
           XLS
         </span>
-        Excel Spreadsheet
+        Excel File
       </a>
       <button
         type="button"

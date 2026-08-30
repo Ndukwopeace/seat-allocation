@@ -39,7 +39,7 @@ export function AddStudentForm({
             htmlFor="matricNumber"
             className="text-sm font-medium text-ink"
           >
-            Matric number
+            Student ID
           </label>
           <input
             id="matricNumber"
@@ -66,7 +66,7 @@ export function AddStudentForm({
 
         <div className="flex flex-col gap-1.5">
           <label htmlFor="programId" className="text-sm font-medium text-ink">
-            Program
+            Course
           </label>
           <select
             id="programId"
@@ -76,7 +76,7 @@ export function AddStudentForm({
             className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
           >
             <option value="" disabled>
-              Select a program
+              Select a course
             </option>
             {programs.map((p) => (
               <option key={p.id} value={p.id}>
@@ -86,7 +86,7 @@ export function AddStudentForm({
           </select>
           {programs.length === 0 && (
             <p className="text-xs text-red-600">
-              No programs exist yet — add one under More → Programs first.
+              No courses yet — add one under More → Courses first.
             </p>
           )}
         </div>
@@ -112,7 +112,7 @@ export function AddStudentForm({
             ))}
           </select>
           <p className="text-xs text-muted">
-            Automatically added to any existing session for this year.
+            Added automatically to any exam already made for this year.
           </p>
         </div>
 

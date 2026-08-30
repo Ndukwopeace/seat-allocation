@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { formatRole } from "@/lib/format";
 import { AddUserForm } from "./AddUserForm";
 
 export default async function AdminUsersPage() {
@@ -33,7 +34,7 @@ export default async function AdminUsersPage() {
             </div>
             <div className="flex flex-none flex-col items-end gap-1">
               <span className="rounded-full bg-mist px-2 py-0.5 text-xs font-medium text-muted">
-                {u.role}
+                {formatRole(u.role)}
               </span>
               <span className="text-xs text-muted">
                 {u.passwordHash ? "Password + Google" : "Google only"}

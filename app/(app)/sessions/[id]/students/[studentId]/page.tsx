@@ -51,14 +51,14 @@ export default async function StudentAllocationDetailPage(
       </div>
 
       <div className="rounded-[28px] border border-hairline bg-white shadow-sm">
-        <DetailRow label="Matriculation Number" value={student.matricNumber} />
+        <DetailRow label="Student ID" value={student.matricNumber} />
         <DetailRow
           label="Seat Number"
           value={entry.seatNumber}
           valueClassName="font-mono text-4xl font-medium text-coral"
         />
         <DetailRow
-          label="Session"
+          label="Exam"
           value={`${formatYear(session.year)}${session.label ? ` — ${session.label}` : ""}`}
         />
         <DetailRow

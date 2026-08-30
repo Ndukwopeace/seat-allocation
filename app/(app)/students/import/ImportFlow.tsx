@@ -100,9 +100,9 @@ export function ImportFlow() {
             <table className="w-full text-left text-sm">
               <thead className="bg-mist text-ink/70">
                 <tr>
-                  <th className="px-4 py-2">Matric No.</th>
+                  <th className="px-4 py-2">Student ID</th>
                   <th className="px-4 py-2">Full Name</th>
-                  <th className="px-4 py-2">Program</th>
+                  <th className="px-4 py-2">Course</th>
                   <th className="px-4 py-2">Year</th>
                 </tr>
               </thead>

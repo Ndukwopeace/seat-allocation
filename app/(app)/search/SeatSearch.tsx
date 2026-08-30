@@ -35,7 +35,7 @@ export function SeatSearch({ rows }: { rows: Row[] }) {
       <input
         type="search"
         autoFocus
-        placeholder="Search by name, matric number, or seat number"
+        placeholder="Search by name, student ID, or seat number"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
@@ -48,7 +48,7 @@ export function SeatSearch({ rows }: { rows: Row[] }) {
         </p>
       ) : filtered.length === 0 ? (
         <p className="rounded-3xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
-          No matches in any allocated session.
+          No matches in any exam.
         </p>
       ) : (
         <ul className="flex flex-col gap-2">

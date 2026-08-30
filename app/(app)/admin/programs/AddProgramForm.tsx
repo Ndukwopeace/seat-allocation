@@ -19,7 +19,7 @@ export function AddProgramForm() {
   return (
     <details className="rounded-3xl border border-hairline bg-white shadow-sm">
       <summary className="cursor-pointer px-4 py-4 text-base font-medium text-ink">
-        + Add program
+        + Add course
       </summary>
       <form
         ref={formRef}
@@ -28,7 +28,7 @@ export function AddProgramForm() {
       >
         <div className="flex flex-col gap-1.5">
           <label htmlFor="name" className="text-sm font-medium text-ink">
-            Program name
+            Course name
           </label>
           <input
             id="name"
@@ -39,8 +39,8 @@ export function AddProgramForm() {
             className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
           />
           <p className="text-xs text-muted">
-            Must match exactly what appears in the &ldquo;program&rdquo; column
-            when importing students.
+            Must be exactly the same as the &ldquo;program&rdquo; column when
+            you import students.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ export function AddProgramForm() {
           </p>
         )}
         {state.success && (
-          <p className="text-sm text-emerald-600">Program added.</p>
+          <p className="text-sm text-emerald-600">Course added.</p>
         )}
 
         <button
@@ -59,7 +59,7 @@ export function AddProgramForm() {
           className="inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60"
         >
           {pending && <Spinner />}
-          {pending ? "Adding…" : "Add program"}
+          {pending ? "Adding…" : "Add course"}
         </button>
       </form>
     </details>

@@ -39,21 +39,21 @@ export function ManageStudents({
   return (
     <details className="rounded-3xl border border-hairline bg-white shadow-sm">
       <summary className="flex cursor-pointer items-center justify-between px-4 py-4 text-base font-medium text-ink">
-        <span>Manage Students</span>
+        <span>Add or Remove Students</span>
         <span className="text-sm font-normal text-muted">
-          {participants.length} on roster
+          {participants.length} students
         </span>
       </summary>
 
       <div className="flex flex-col gap-4 px-4 pb-4">
         <div className="flex flex-col gap-1.5">
           <label htmlFor="add-student" className="text-sm font-medium text-ink">
-            Add a student to this session
+            Add a student to this exam
           </label>
           <input
             id="add-student"
             type="search"
-            placeholder="Search by name or matric number"
+            placeholder="Search by name or student ID"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
@@ -62,7 +62,7 @@ export function ManageStudents({
             <ul className="flex flex-col gap-1.5 rounded-2xl border border-hairline p-2">
               {filteredCandidates.length === 0 ? (
                 <li className="px-2 py-1 text-sm text-muted">
-                  No match, or already on the roster.
+                  No match, or already added.
                 </li>
               ) : (
                 filteredCandidates.map((c) => (
@@ -100,11 +100,11 @@ export function ManageStudents({
 
         <div className="flex flex-col gap-1.5">
           <p className="text-sm font-medium text-ink">
-            On the roster ({participants.length})
+            In this exam ({participants.length})
           </p>
           {participants.length === 0 ? (
             <p className="rounded-2xl border border-dashed border-hairline px-3 py-4 text-center text-sm text-muted">
-              No students on this session&rsquo;s roster yet.
+              No students in this exam yet.
             </p>
           ) : (
             <ul className="flex max-h-80 flex-col gap-1.5 overflow-y-auto rounded-2xl border border-hairline p-2">
@@ -141,9 +141,9 @@ export function ManageStudents({
         </div>
 
         <p className="text-xs text-muted">
-          Changes here take effect the next time an allocation is generated or
-          regenerated — they don&rsquo;t retroactively change an
-          already-issued seat number.
+          Changes here take effect the next time you make or remake the seat
+          list — they don&rsquo;t change a seat number that&rsquo;s already
+          been given.
         </p>
       </div>
     </details>

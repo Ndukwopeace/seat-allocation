@@ -14,7 +14,7 @@ export default async function AdminProgramsPage() {
   return (
     <main className="flex flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-xl font-medium text-ink">Programs</h1>
+        <h1 className="font-display text-xl font-medium text-ink">Courses</h1>
         <Link href="/" className="text-sm text-muted">
           Back
         </Link>
@@ -24,7 +24,7 @@ export default async function AdminProgramsPage() {
 
       {programs.length === 0 ? (
         <p className="rounded-3xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
-          No programs yet. Add one above before importing students.
+          No courses yet. Add one above before you import students.
         </p>
       ) : (
         <ul className="flex flex-col gap-2">

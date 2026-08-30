@@ -48,7 +48,7 @@ export async function createExamSession(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid session details." };
+    return { error: parsed.error.issues[0]?.message ?? "Check the exam details." };
   }
 
   const { year, label, date, startTime, endTime } = parsed.data;

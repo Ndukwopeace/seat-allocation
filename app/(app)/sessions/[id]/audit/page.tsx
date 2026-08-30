@@ -6,9 +6,9 @@ import { formatDate, formatTime, formatYear } from "@/lib/format";
 import type { AuditAction } from "@/app/generated/prisma/enums";
 
 const ACTION_LABELS: Record<AuditAction, string> = {
-  ALLOCATION_GENERATED: "Generated",
-  ALLOCATION_REGENERATED: "Regenerated",
-  ALLOCATION_ADMIN_OVERRIDE: "Admin Override",
+  ALLOCATION_GENERATED: "List made",
+  ALLOCATION_REGENERATED: "New list made",
+  ALLOCATION_ADMIN_OVERRIDE: "Admin action",
 };
 
 export default async function AuditHistoryPage(
@@ -29,7 +29,7 @@ export default async function AuditHistoryPage(
   return (
     <main className="flex flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-xl font-medium text-ink">Audit History</h1>
+        <h1 className="font-display text-xl font-medium text-ink">Changes</h1>
         <Link href={`/sessions/${id}`} className="text-sm text-muted">
           Back
         </Link>
@@ -42,7 +42,7 @@ export default async function AuditHistoryPage(
 
       {entries.length === 0 ? (
         <p className="rounded-3xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
-          No allocation activity yet for this session.
+          No changes yet for this exam.
         </p>
       ) : (
         <ul className="flex flex-col gap-2">

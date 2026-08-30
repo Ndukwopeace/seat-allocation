@@ -69,7 +69,7 @@ export function SessionTabs({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
-        aria-label="Search sessions"
+        aria-label="Search exams"
       />
 
       <div className="flex gap-1 rounded-full bg-mist p-1">
@@ -91,7 +91,7 @@ export function SessionTabs({
       <ul className="flex flex-col gap-3">
         {dayGroups.length === 0 && (
           <li className="rounded-2xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
-            No {tab} sessions.
+            No {tab} exams.
           </li>
         )}
         {dayGroups.map((group) => (
@@ -103,7 +103,7 @@ export function SessionTabs({
               <summary className="flex cursor-pointer items-center justify-between px-4 py-4 text-base font-medium text-ink">
                 <span>{group.dayHeading}</span>
                 <span className="text-sm font-normal text-muted">
-                  {group.sessions.length} session
+                  {group.sessions.length} exam
                   {group.sessions.length === 1 ? "" : "s"}
                 </span>
               </summary>
@@ -121,7 +121,7 @@ export function SessionTabs({
                         </span>
                         <p className="mt-1 text-sm text-muted">
                           {session.startTime}–{session.endTime} ·{" "}
-                          {session.studentCount} registered student
+                          {session.studentCount} student
                           {session.studentCount === 1 ? "" : "s"}
                         </p>
                       </div>
@@ -133,8 +133,8 @@ export function SessionTabs({
                         }`}
                       >
                         {session.version === 0
-                          ? "Not allocated"
-                          : `Version ${session.version}`}
+                          ? "No seats yet"
+                          : `Ready (v${session.version})`}
                       </span>
                     </Link>
                   </li>
