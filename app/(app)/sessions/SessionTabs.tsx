@@ -16,33 +16,54 @@ type SessionRow = {
   version: number;
 };
 
-type DayGroup = {
-  dayKey: string;
-  dayHeading: string;
+type YearGroup = {
+  year: string;
+  yearLabel: string;
   sessions: SessionRow[];
 };
 
-// Groups same-day exams together and orders them by year, then by start
-// time within that year — otherwise same-day exams across different years
-// come back in whatever order the DB happens to return them in, which reads
-// as scattered rather than organized (e.g. Year 1 and Year 2 interleaved on
-// the same Monday).
+type DayGroup = {
+  dayKey: string;
+  dayHeading: string;
+  examCount: number;
+  yearGroups: YearGroup[];
+};
+
+// Three levels: day -> year -> that year's exams, sorted by start time.
+// A flat day -> exams list read as scattered once a day had more than one
+// year's exams on it (Year 1 and Year 2 interleaved by whatever order the
+// DB happened to return) — grouping by year first, so a day expands into
+// "Year 1 / Year 2" and each year expands into its own exam times, keeps
+// same-day exams from different years from ever mixing in the same list.
 function groupByDay(rows: SessionRow[]): DayGroup[] {
-  const groups = new Map<string, DayGroup>();
+  const days = new Map<string, { dayHeading: string; years: Map<string, YearGroup> }>();
+
   for (const row of rows) {
-    let group = groups.get(row.dayKey);
-    if (!group) {
-      group = { dayKey: row.dayKey, dayHeading: row.dayHeading, sessions: [] };
-      groups.set(row.dayKey, group);
+    let day = days.get(row.dayKey);
+    if (!day) {
+      day = { dayHeading: row.dayHeading, years: new Map() };
+      days.set(row.dayKey, day);
     }
-    group.sessions.push(row);
+    let yearGroup = day.years.get(row.year);
+    if (!yearGroup) {
+      yearGroup = { year: row.year, yearLabel: row.yearLabel, sessions: [] };
+      day.years.set(row.year, yearGroup);
+    }
+    yearGroup.sessions.push(row);
   }
-  for (const group of groups.values()) {
-    group.sessions.sort(
-      (a, b) => a.year.localeCompare(b.year) || a.startTime.localeCompare(b.startTime),
-    );
-  }
-  return [...groups.values()];
+
+  return [...days.entries()].map(([dayKey, day]) => {
+    const yearGroups = [...day.years.values()].sort((a, b) => a.year.localeCompare(b.year));
+    for (const yearGroup of yearGroups) {
+      yearGroup.sessions.sort((a, b) => a.startTime.localeCompare(b.startTime));
+    }
+    return {
+      dayKey,
+      dayHeading: day.dayHeading,
+      examCount: yearGroups.reduce((sum, yg) => sum + yg.sessions.length, 0),
+      yearGroups,
+    };
+  });
 }
 
 export function SessionTabs({
@@ -67,8 +88,9 @@ export function SessionTabs({
     );
   }, [rows, query]);
 
-  // A search implies "jump to the result" — keep every matching day expanded
-  // instead of making the user open it after already narrowing the list.
+  // A search implies "jump to the result" — keep every matching day (and
+  // the years inside it) expanded instead of making the user open each
+  // level after already narrowing the list.
   const hasQuery = query.trim() !== "";
   // Upcoming reads soonest-day-first; past reads most-recent-day-first —
   // sorted explicitly here rather than relying on the incoming rows' order,
@@ -114,49 +136,65 @@ export function SessionTabs({
             No {tab} exams.
           </li>
         )}
-        {dayGroups.map((group) => (
-          <li key={group.dayKey}>
+        {dayGroups.map((day) => (
+          <li key={day.dayKey}>
             <details
               open={hasQuery}
               className="rounded-3xl border border-hairline bg-white shadow-sm"
             >
               <summary className="flex cursor-pointer items-center justify-between px-4 py-4 text-base font-medium text-ink">
-                <span>{group.dayHeading}</span>
+                <span>{day.dayHeading}</span>
                 <span className="text-sm font-normal text-muted">
-                  {group.sessions.length} exam
-                  {group.sessions.length === 1 ? "" : "s"}
+                  {day.examCount} exam{day.examCount === 1 ? "" : "s"}
                 </span>
               </summary>
               <ul className="flex flex-col gap-2 px-4 pb-4">
-                {group.sessions.map((session) => (
-                  <li key={session.id}>
-                    <Link
-                      href={`/sessions/${session.id}`}
-                      className="flex items-center justify-between rounded-2xl border border-hairline px-4 py-3 active:scale-[0.98]"
+                {day.yearGroups.map((yearGroup) => (
+                  <li key={yearGroup.year}>
+                    <details
+                      open={hasQuery}
+                      className="rounded-2xl border border-hairline"
                     >
-                      <div>
-                        <span className="font-medium text-ink">
-                          {session.yearLabel}
-                          {session.label ? ` — ${session.label}` : ""}
+                      <summary className="flex cursor-pointer items-center justify-between px-3 py-2.5 text-sm font-medium text-ink">
+                        <span>{yearGroup.yearLabel}</span>
+                        <span className="text-xs font-normal text-muted">
+                          {yearGroup.sessions.length} exam
+                          {yearGroup.sessions.length === 1 ? "" : "s"}
                         </span>
-                        <p className="mt-1 text-sm text-muted">
-                          {session.startTime}–{session.endTime} ·{" "}
-                          {session.studentCount} student
-                          {session.studentCount === 1 ? "" : "s"}
-                        </p>
-                      </div>
-                      <span
-                        className={`flex-none rounded-full px-2 py-0.5 text-xs font-medium ${
-                          session.version === 0
-                            ? "bg-mist text-muted"
-                            : "bg-emerald-100 text-emerald-700"
-                        }`}
-                      >
-                        {session.version === 0
-                          ? "No seats yet"
-                          : `Ready (v${session.version})`}
-                      </span>
-                    </Link>
+                      </summary>
+                      <ul className="flex flex-col gap-2 px-2 pb-2">
+                        {yearGroup.sessions.map((session) => (
+                          <li key={session.id}>
+                            <Link
+                              href={`/sessions/${session.id}`}
+                              className="flex items-center justify-between rounded-xl border border-hairline px-3 py-2.5 active:scale-[0.98]"
+                            >
+                              <div>
+                                <span className="text-sm font-medium text-ink">
+                                  {session.startTime}–{session.endTime}
+                                  {session.label ? ` — ${session.label}` : ""}
+                                </span>
+                                <p className="mt-0.5 text-xs text-muted">
+                                  {session.studentCount} student
+                                  {session.studentCount === 1 ? "" : "s"}
+                                </p>
+                              </div>
+                              <span
+                                className={`flex-none rounded-full px-2 py-0.5 text-xs font-medium ${
+                                  session.version === 0
+                                    ? "bg-mist text-muted"
+                                    : "bg-emerald-100 text-emerald-700"
+                                }`}
+                              >
+                                {session.version === 0
+                                  ? "No seats yet"
+                                  : `Ready (v${session.version})`}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
                   </li>
                 ))}
               </ul>
