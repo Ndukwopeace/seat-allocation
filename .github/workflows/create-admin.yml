@@ -33,14 +33,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Create admin
+      - name: Apply database migrations
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
-          ADMIN_EMAIL: ${{ inputs.email }}
-          ADMIN_NAME: ${{ inputs.name }}
         run: |
           if [ -z "$DATABASE_URL" ]; then
             echo "::error::PRODUCTION_DATABASE_URL secret is not set."
             exit 1
           fi
-          node --import tsx scripts/create-admin.ts "$ADMIN_EMAIL" "$ADMIN_NAME"
+          npx prisma migrate deploy
+
+      - name: Create admin
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          ADMIN_EMAIL: ${{ inputs.email }}
+          ADMIN_NAME: ${{ inputs.name }}
+        run: node --import tsx scripts/create-admin.ts "$ADMIN_EMAIL" "$ADMIN_NAME"
