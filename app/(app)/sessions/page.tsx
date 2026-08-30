@@ -59,6 +59,15 @@ export default async function SessionsPage() {
         </Link>
       </div>
 
+      {user.role === "ADMIN" && (
+        <Link
+          href="/sessions/import"
+          className="rounded-full bg-coral px-4 py-3.5 text-center text-base font-semibold text-white active:scale-[0.98]"
+        >
+          + Import Exams
+        </Link>
+      )}
+
       {user.role === "ADMIN" && <CreateSessionForm />}
 
       <SessionTabs upcoming={upcoming} past={past} />
