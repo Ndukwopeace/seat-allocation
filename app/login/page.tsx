@@ -19,21 +19,21 @@ export default async function LoginPage(props: PageProps<"/login">) {
     typeof errorParam === "string" ? GOOGLE_ERROR_MESSAGES[errorParam] : undefined;
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-6 py-12">
-      <div className="w-full max-w-sm">
+    <main className="flex flex-1 flex-col items-center justify-center bg-canvas px-6 py-12">
+      <div className="w-full max-w-sm rounded-[28px] border border-hairline bg-white px-6 py-8 shadow-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-xl font-semibold text-slate-900">
-            SIU Exam Seat Allocation
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="font-display text-2xl font-medium text-ink">
             Sign in to continue
+          </h1>
+          <p className="mt-1.5 text-sm text-muted">
+            SIU Exam Seat Allocation
           </p>
         </div>
 
         {googleError && (
           <p
             role="alert"
-            className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
+            className="mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700"
           >
             {googleError}
           </p>
@@ -41,16 +41,16 @@ export default async function LoginPage(props: PageProps<"/login">) {
 
         <a
           href={`/login/google?next=${encodeURIComponent(next)}`}
-          className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-3 text-base font-medium text-slate-700 shadow-sm active:scale-[0.99]"
+          className="flex w-full items-center justify-center gap-3 rounded-full border border-hairline bg-white px-4 py-3.5 text-base font-medium text-ink shadow-sm active:scale-[0.98]"
         >
           <GoogleLogo />
           Continue with Google
         </a>
 
-        <div className="my-6 flex items-center gap-3 text-xs text-slate-500">
-          <div className="h-px flex-1 bg-slate-200" />
+        <div className="my-6 flex items-center gap-3 text-xs text-muted">
+          <div className="h-px flex-1 bg-hairline" />
           or
-          <div className="h-px flex-1 bg-slate-200" />
+          <div className="h-px flex-1 bg-hairline" />
         </div>
 
         <LoginForm next={next} />

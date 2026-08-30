@@ -68,19 +68,19 @@ export function SessionTabs({
         placeholder="Search by day, year, or label"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+        className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
         aria-label="Search sessions"
       />
 
-      <div className="flex gap-1 rounded-lg bg-slate-100 p-1">
+      <div className="flex gap-1 rounded-full bg-mist p-1">
         {(["upcoming", "past"] as const).map((t) => (
           <button
             key={t}
             type="button"
             onClick={() => setTab(t)}
             aria-pressed={tab === t}
-            className={`flex-1 rounded-md py-2 text-sm font-medium capitalize ${
-              tab === t ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
+            className={`flex-1 rounded-full py-2 text-sm font-medium capitalize ${
+              tab === t ? "bg-white text-ink shadow-sm" : "text-muted"
             }`}
           >
             {t} ({t === "upcoming" ? upcoming.length : past.length})
@@ -90,7 +90,7 @@ export function SessionTabs({
 
       <ul className="flex flex-col gap-3">
         {dayGroups.length === 0 && (
-          <li className="rounded-xl border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500">
+          <li className="rounded-2xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
             No {tab} sessions.
           </li>
         )}
@@ -98,11 +98,11 @@ export function SessionTabs({
           <li key={group.dayKey}>
             <details
               open={hasQuery}
-              className="rounded-xl border border-slate-200 bg-white shadow-sm"
+              className="rounded-3xl border border-hairline bg-white shadow-sm"
             >
-              <summary className="flex cursor-pointer items-center justify-between px-4 py-4 text-base font-medium text-slate-900">
+              <summary className="flex cursor-pointer items-center justify-between px-4 py-4 text-base font-medium text-ink">
                 <span>{group.dayHeading}</span>
-                <span className="text-sm font-normal text-slate-500">
+                <span className="text-sm font-normal text-muted">
                   {group.sessions.length} session
                   {group.sessions.length === 1 ? "" : "s"}
                 </span>
@@ -112,14 +112,14 @@ export function SessionTabs({
                   <li key={session.id}>
                     <Link
                       href={`/sessions/${session.id}`}
-                      className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3 active:scale-[0.99]"
+                      className="flex items-center justify-between rounded-2xl border border-hairline px-4 py-3 active:scale-[0.98]"
                     >
                       <div>
-                        <span className="font-medium text-slate-900">
+                        <span className="font-medium text-ink">
                           {session.yearLabel}
                           {session.label ? ` — ${session.label}` : ""}
                         </span>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className="mt-1 text-sm text-muted">
                           {session.startTime}–{session.endTime} ·{" "}
                           {session.studentCount} registered student
                           {session.studentCount === 1 ? "" : "s"}
@@ -128,7 +128,7 @@ export function SessionTabs({
                       <span
                         className={`flex-none rounded-full px-2 py-0.5 text-xs font-medium ${
                           session.version === 0
-                            ? "bg-slate-100 text-slate-600"
+                            ? "bg-mist text-muted"
                             : "bg-emerald-100 text-emerald-700"
                         }`}
                       >

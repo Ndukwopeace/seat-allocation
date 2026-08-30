@@ -28,15 +28,15 @@ export default async function StudentsPage() {
   return (
     <main className="flex flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
       <div>
-        <h1 className="text-lg font-semibold text-slate-900">Students</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="font-display text-xl font-medium text-ink">Students</h1>
+        <p className="text-sm text-muted">
           {students.length} registered student{students.length === 1 ? "" : "s"}
         </p>
       </div>
 
       <Link
         href="/students/import"
-        className="rounded-lg bg-slate-900 px-4 py-3 text-center text-base font-semibold text-white active:scale-[0.99]"
+        className="rounded-full bg-coral px-4 py-3.5 text-center text-base font-semibold text-white active:scale-[0.98]"
       >
         + Import Students
       </Link>

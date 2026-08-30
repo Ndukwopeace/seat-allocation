@@ -25,8 +25,8 @@ export function AddStudentForm({
   }, [state.success]);
 
   return (
-    <details className="rounded-xl border border-slate-200 bg-white shadow-sm">
-      <summary className="cursor-pointer px-4 py-4 text-base font-medium text-slate-900">
+    <details className="rounded-3xl border border-hairline bg-white shadow-sm">
+      <summary className="cursor-pointer px-4 py-4 text-base font-medium text-ink">
         + Add one student
       </summary>
       <form
@@ -37,7 +37,7 @@ export function AddStudentForm({
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="matricNumber"
-            className="text-sm font-medium text-slate-700"
+            className="text-sm font-medium text-ink"
           >
             Matric number
           </label>
@@ -47,12 +47,12 @@ export function AddStudentForm({
             type="text"
             required
             placeholder="e.g. SIU25SWE025"
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+            className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="fullName" className="text-sm font-medium text-slate-700">
+          <label htmlFor="fullName" className="text-sm font-medium text-ink">
             Full name
           </label>
           <input
@@ -60,12 +60,12 @@ export function AddStudentForm({
             name="fullName"
             type="text"
             required
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+            className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="programId" className="text-sm font-medium text-slate-700">
+          <label htmlFor="programId" className="text-sm font-medium text-ink">
             Program
           </label>
           <select
@@ -73,7 +73,7 @@ export function AddStudentForm({
             name="programId"
             required
             defaultValue=""
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+            className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
           >
             <option value="" disabled>
               Select a program
@@ -92,7 +92,7 @@ export function AddStudentForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="year" className="text-sm font-medium text-slate-700">
+          <label htmlFor="year" className="text-sm font-medium text-ink">
             Year
           </label>
           <select
@@ -100,7 +100,7 @@ export function AddStudentForm({
             name="year"
             required
             defaultValue=""
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+            className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
           >
             <option value="" disabled>
               Select a year
@@ -111,7 +111,7 @@ export function AddStudentForm({
               </option>
             ))}
           </select>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted">
             Automatically added to any existing session for this year.
           </p>
         </div>
@@ -128,7 +128,7 @@ export function AddStudentForm({
         <button
           type="submit"
           disabled={pending || programs.length === 0}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-base font-semibold text-white disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60"
         >
           {pending && <Spinner />}
           {pending ? "Adding…" : "Add student"}

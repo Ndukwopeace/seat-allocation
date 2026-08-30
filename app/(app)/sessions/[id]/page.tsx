@@ -64,16 +64,16 @@ export default async function SessionDetailPage(
   return (
     <main className="flex flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">
+        <h1 className="font-display text-xl font-medium text-ink">
           {formatYear(session.year)}
           {session.label ? ` — ${session.label}` : ""}
         </h1>
-        <Link href="/sessions" className="text-sm text-slate-500">
+        <Link href="/sessions" className="text-sm text-muted">
           Back
         </Link>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-sm text-slate-600 shadow-sm">
+      <div className="rounded-3xl border border-hairline bg-white px-4 py-4 text-sm text-ink/80 shadow-sm">
         <p>
           {formatDate(session.date)} · {formatTime(session.startTime)}–
           {formatTime(session.endTime)}
@@ -94,18 +94,18 @@ export default async function SessionDetailPage(
       </div>
 
       {programCounts.length > 0 && (
-        <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
-          <p className="mb-2 text-sm font-semibold text-slate-900">
+        <div className="rounded-3xl border border-hairline bg-white px-4 py-4 shadow-sm">
+          <p className="mb-2 text-sm font-semibold text-ink">
             Programs in this session
           </p>
           <ul className="flex flex-col gap-1.5">
             {programCounts.map((p) => (
               <li
                 key={p.name}
-                className="flex items-center justify-between text-sm text-slate-600"
+                className="flex items-center justify-between text-sm text-ink/70"
               >
                 <span>{p.name}</span>
-                <span className="font-medium text-slate-900">{p.count}</span>
+                <span className="font-mono font-medium text-ink">{p.count}</span>
               </li>
             ))}
           </ul>
@@ -135,7 +135,7 @@ export default async function SessionDetailPage(
       {user.role === "ADMIN" && allocation && (
         <Link
           href={`/sessions/${id}/audit`}
-          className="text-center text-sm text-slate-500 underline"
+          className="text-center text-sm text-muted underline"
         >
           View Audit History
         </Link>
@@ -152,9 +152,9 @@ export default async function SessionDetailPage(
 
 function SessionStat({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-center shadow-sm">
-      <p className="text-lg font-bold text-slate-900">{value}</p>
-      <p className="text-xs text-slate-500">{label}</p>
+    <div className="rounded-2xl border border-hairline bg-white px-3 py-3 text-center shadow-sm">
+      <p className="font-mono text-lg font-medium text-ink">{value}</p>
+      <p className="text-xs text-muted">{label}</p>
     </div>
   );
 }

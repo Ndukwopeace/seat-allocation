@@ -47,12 +47,12 @@ export function AllocationList({
         placeholder="Search matric number, name or seat number"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+        className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
         aria-label="Search allocation list"
       />
 
       <div className="flex flex-wrap gap-2 text-sm">
-        <span className="text-slate-500">Sort by:</span>
+        <span className="text-muted">Sort by:</span>
         {(
           [
             ["seatNumber", "Seat"],
@@ -68,8 +68,8 @@ export function AllocationList({
             aria-pressed={sortKey === key}
             className={`rounded-full px-3 py-1 ${
               sortKey === key
-                ? "bg-slate-900 text-white"
-                : "bg-slate-100 text-slate-700"
+                ? "bg-coral text-white"
+                : "bg-mist text-ink"
             }`}
           >
             {label}
@@ -77,7 +77,7 @@ export function AllocationList({
         ))}
       </div>
 
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-muted">
         {filtered.length} of {rows.length} students
       </p>
 
@@ -87,14 +87,14 @@ export function AllocationList({
           <li key={r.matricNumber}>
             <Link
               href={`/sessions/${examSessionId}/students/${r.studentId}`}
-              className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm active:scale-[0.99]"
+              className="flex items-center gap-4 rounded-2xl border border-hairline bg-white px-4 py-3 shadow-sm active:scale-[0.98]"
             >
-              <span className="flex h-12 w-12 flex-none items-center justify-center rounded-lg bg-slate-900 text-lg font-bold text-white">
+              <span className="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-coral font-mono text-lg font-medium text-white">
                 {r.seatNumber}
               </span>
               <div className="min-w-0">
-                <p className="truncate font-medium text-slate-900">{r.fullName}</p>
-                <p className="truncate text-sm text-slate-500">
+                <p className="truncate font-medium text-ink">{r.fullName}</p>
+                <p className="truncate text-sm text-muted">
                   {r.matricNumber} · {r.program}
                 </p>
               </div>
@@ -104,9 +104,9 @@ export function AllocationList({
       </ul>
 
       {/* Desktop/tablet: table. */}
-      <div className="hidden overflow-x-auto rounded-xl border border-slate-200 sm:block">
+      <div className="hidden overflow-x-auto rounded-2xl border border-hairline sm:block">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-slate-600">
+          <thead className="bg-mist text-ink/70">
             <tr>
               <th className="px-4 py-2">Seat</th>
               <th className="px-4 py-2">Matric No.</th>
@@ -117,8 +117,8 @@ export function AllocationList({
           </thead>
           <tbody>
             {filtered.map((r) => (
-              <tr key={r.matricNumber} className="border-t border-slate-100">
-                <td className="px-4 py-2 font-semibold text-slate-900">
+              <tr key={r.matricNumber} className="border-t border-hairline">
+                <td className="px-4 py-2 font-mono font-semibold text-ink">
                   {r.seatNumber}
                 </td>
                 <td className="px-4 py-2">{r.matricNumber}</td>
@@ -127,7 +127,7 @@ export function AllocationList({
                 <td className="px-4 py-2 text-right">
                   <Link
                     href={`/sessions/${examSessionId}/students/${r.studentId}`}
-                    className="text-slate-500 underline"
+                    className="text-muted underline"
                   >
                     View
                   </Link>
@@ -139,7 +139,7 @@ export function AllocationList({
       </div>
 
       {filtered.length === 0 && (
-        <p className="py-6 text-center text-sm text-slate-500">No matches.</p>
+        <p className="py-6 text-center text-sm text-muted">No matches.</p>
       )}
     </div>
   );

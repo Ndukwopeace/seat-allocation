@@ -8,8 +8,8 @@ export default async function ImportStudentsPage() {
   return (
     <main className="flex flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">Import Students</h1>
-        <Link href="/students" className="text-sm text-slate-500">
+        <h1 className="font-display text-xl font-medium text-ink">Import Students</h1>
+        <Link href="/students" className="text-sm text-muted">
           Cancel
         </Link>
       </div>

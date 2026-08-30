@@ -29,19 +29,19 @@ export default async function AuditHistoryPage(
   return (
     <main className="flex flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">Audit History</h1>
-        <Link href={`/sessions/${id}`} className="text-sm text-slate-500">
+        <h1 className="font-display text-xl font-medium text-ink">Audit History</h1>
+        <Link href={`/sessions/${id}`} className="text-sm text-muted">
           Back
         </Link>
       </div>
 
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-muted">
         {formatYear(session.year)}
         {session.label ? ` — ${session.label}` : ""}
       </p>
 
       {entries.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500">
+        <p className="rounded-3xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
           No allocation activity yet for this session.
         </p>
       ) : (
@@ -49,13 +49,13 @@ export default async function AuditHistoryPage(
           {entries.map((entry) => (
             <li
               key={entry.id}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
+              className="rounded-3xl border border-hairline bg-white px-4 py-3 shadow-sm"
             >
               <div className="flex items-center justify-between">
-                <span className="font-medium text-slate-900">
+                <span className="font-medium text-ink">
                   Version {entry.toVersion}
                   {entry.fromVersion !== null && (
-                    <span className="font-normal text-slate-500">
+                    <span className="font-normal text-muted">
                       {" "}
                       (from {entry.fromVersion})
                     </span>
@@ -65,18 +65,18 @@ export default async function AuditHistoryPage(
                   className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                     entry.action === "ALLOCATION_ADMIN_OVERRIDE"
                       ? "bg-amber-100 text-amber-700"
-                      : "bg-slate-100 text-slate-600"
+                      : "bg-mist text-muted"
                   }`}
                 >
                   {ACTION_LABELS[entry.action]}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-muted">
                 {entry.user.name} · {formatDate(entry.createdAt)},{" "}
                 {formatTime(entry.createdAt)}
               </p>
               {entry.reason && (
-                <p className="mt-1 text-sm text-slate-600">
+                <p className="mt-1 text-sm text-ink/70">
                   Reason: {entry.reason}
                 </p>
               )}

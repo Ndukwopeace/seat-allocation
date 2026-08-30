@@ -24,12 +24,12 @@ export default async function SeatSearchPage() {
   return (
     <main className="flex flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">Seat Search</h1>
-        <Link href="/" className="text-sm text-slate-500">
+        <h1 className="font-display text-xl font-medium text-ink">Seat Search</h1>
+        <Link href="/" className="text-sm text-muted">
           Back
         </Link>
       </div>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-muted">
         Find a student&rsquo;s seat by name, matric number, or seat number —
         across every allocated session.
       </p>

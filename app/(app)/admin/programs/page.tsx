@@ -14,8 +14,8 @@ export default async function AdminProgramsPage() {
   return (
     <main className="flex flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">Programs</h1>
-        <Link href="/" className="text-sm text-slate-500">
+        <h1 className="font-display text-xl font-medium text-ink">Programs</h1>
+        <Link href="/" className="text-sm text-muted">
           Back
         </Link>
       </div>
@@ -23,7 +23,7 @@ export default async function AdminProgramsPage() {
       <AddProgramForm />
 
       {programs.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500">
+        <p className="rounded-3xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
           No programs yet. Add one above before importing students.
         </p>
       ) : (
@@ -31,10 +31,10 @@ export default async function AdminProgramsPage() {
           {programs.map((p) => (
             <li
               key={p.id}
-              className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
+              className="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-white px-4 py-3 shadow-sm"
             >
-              <p className="truncate font-medium text-slate-900">{p.name}</p>
-              <span className="flex-none rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+              <p className="truncate font-medium text-ink">{p.name}</p>
+              <span className="flex-none rounded-full bg-mist px-2 py-0.5 text-xs font-medium text-muted">
                 {p._count.students} student{p._count.students === 1 ? "" : "s"}
               </span>
             </li>

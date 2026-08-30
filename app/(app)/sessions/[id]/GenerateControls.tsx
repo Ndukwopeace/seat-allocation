@@ -115,16 +115,16 @@ export function GenerateControls({
               setFlash(null);
               setConfirmingGenerate(true);
             }}
-            className="w-full rounded-lg bg-slate-900 px-4 py-3 text-base font-semibold text-white active:scale-[0.99]"
+            className="w-full rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white active:scale-[0.98]"
           >
             Generate Allocation
           </button>
         ) : (
           <form
             action={genFormAction}
-            className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4"
+            className="flex flex-col gap-3 rounded-3xl border border-hairline bg-mist p-4"
           >
-            <p className="text-sm text-slate-700">
+            <p className="text-sm text-ink/80">
               This assigns a random, unique seat number to every registered
               student in this session. Continue?
             </p>
@@ -137,14 +137,14 @@ export function GenerateControls({
               <button
                 type="button"
                 onClick={() => setConfirmingGenerate(false)}
-                className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700"
+                className="flex-1 rounded-full border border-hairline bg-white px-4 py-3 text-sm font-medium text-ink"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={genPending}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 {genPending && <Spinner />}
                 {genPending ? "Generating…" : "Yes, generate"}
@@ -163,7 +163,7 @@ export function GenerateControls({
     <div className="flex flex-col gap-2">
       {banner}
       {userRole === "INVIGILATOR" && (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted">
           {invigilatorRegenerationAvailable
             ? "You have 1 regeneration remaining for this session."
             : "You've used your one regeneration for this session. An admin can override with a reason."}
@@ -177,16 +177,16 @@ export function GenerateControls({
               setFlash(null);
               setConfirmingRegenerate(true);
             }}
-            className="w-full rounded-lg border border-slate-900 px-4 py-3 text-base font-semibold text-slate-900 active:scale-[0.99]"
+            className="w-full rounded-full border-2 border-mesh-black px-4 py-3 text-base font-semibold text-mesh-black active:scale-[0.98]"
           >
             {requireReason ? "Regenerate (Admin Override)" : "Regenerate Allocation"}
           </button>
         ) : (
           <form
             action={regenFormAction}
-            className="flex flex-col gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4"
+            className="flex flex-col gap-3 rounded-3xl border border-amber-300 bg-amber-50 p-4"
           >
-            <p className="text-sm text-slate-700">
+            <p className="text-sm text-ink/80">
               This replaces the current version {currentVersion} allocation
               with a new version {currentVersion + 1}. Every student gets a
               new number. This cannot be undone.
@@ -195,7 +195,7 @@ export function GenerateControls({
               <div className="flex flex-col gap-1.5">
                 <label
                   htmlFor="reason"
-                  className="text-sm font-medium text-slate-700"
+                  className="text-sm font-medium text-ink"
                 >
                   Reason (required, will be logged)
                 </label>
@@ -204,7 +204,7 @@ export function GenerateControls({
                   name="reason"
                   required
                   rows={2}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base"
+                  className="w-full rounded-2xl border-none bg-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-coral/40"
                 />
               </div>
             )}
@@ -217,14 +217,14 @@ export function GenerateControls({
               <button
                 type="button"
                 onClick={() => setConfirmingRegenerate(false)}
-                className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700"
+                className="flex-1 rounded-full border border-hairline bg-white px-4 py-3 text-sm font-medium text-ink"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={regenPending}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-amber-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 {regenPending && <Spinner />}
                 {regenPending ? "Regenerating…" : "Yes, regenerate"}

@@ -34,28 +34,28 @@ export default async function StudentAllocationDetailPage(
   return (
     <main className="flex flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">Student Detail</h1>
-        <Link href={`/sessions/${id}`} className="text-sm text-slate-500">
+        <h1 className="font-display text-xl font-medium text-ink">Student Detail</h1>
+        <Link href={`/sessions/${id}`} className="text-sm text-muted">
           Close
         </Link>
       </div>
 
-      <div className="flex flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-6 text-center shadow-sm">
-        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-900 text-xl font-bold text-white">
+      <div className="flex flex-col items-center gap-2 rounded-[28px] border border-hairline bg-white px-4 py-6 text-center shadow-sm">
+        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-mesh-black font-display text-xl font-medium text-white">
           {initials(student.fullName)}
         </span>
-        <p className="text-lg font-semibold text-slate-900">{student.fullName}</p>
+        <p className="font-display text-lg font-medium text-ink">{student.fullName}</p>
         <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
           {student.program.name} — {formatYear(student.year)}
         </span>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="rounded-[28px] border border-hairline bg-white shadow-sm">
         <DetailRow label="Matriculation Number" value={student.matricNumber} />
         <DetailRow
           label="Seat Number"
           value={entry.seatNumber}
-          valueClassName="text-3xl font-bold text-slate-900"
+          valueClassName="font-mono text-4xl font-medium text-coral"
         />
         <DetailRow
           label="Session"
@@ -70,7 +70,7 @@ export default async function StudentAllocationDetailPage(
 
       <Link
         href={`/sessions/${id}`}
-        className="rounded-lg bg-slate-900 px-4 py-3 text-center text-base font-semibold text-white active:scale-[0.99]"
+        className="rounded-full bg-coral px-4 py-3.5 text-center text-base font-semibold text-white active:scale-[0.98]"
       >
         Back to List
       </Link>
@@ -90,9 +90,9 @@ function DetailRow({
   last?: boolean;
 }) {
   return (
-    <div className={`px-4 py-3 ${last ? "" : "border-b border-slate-100"}`}>
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className={valueClassName ?? "text-sm font-medium text-slate-900"}>{value}</p>
+    <div className={`px-4 py-3 ${last ? "" : "border-b border-hairline"}`}>
+      <p className="text-xs text-muted">{label}</p>
+      <p className={valueClassName ?? "text-sm font-medium text-ink"}>{value}</p>
     </div>
   );
 }

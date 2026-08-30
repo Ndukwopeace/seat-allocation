@@ -17,8 +17,8 @@ export function AddProgramForm() {
   }, [state.success]);
 
   return (
-    <details className="rounded-xl border border-slate-200 bg-white shadow-sm">
-      <summary className="cursor-pointer px-4 py-4 text-base font-medium text-slate-900">
+    <details className="rounded-3xl border border-hairline bg-white shadow-sm">
+      <summary className="cursor-pointer px-4 py-4 text-base font-medium text-ink">
         + Add program
       </summary>
       <form
@@ -27,7 +27,7 @@ export function AddProgramForm() {
         className="flex flex-col gap-4 px-4 pb-4"
       >
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="name" className="text-sm font-medium text-slate-700">
+          <label htmlFor="name" className="text-sm font-medium text-ink">
             Program name
           </label>
           <input
@@ -36,9 +36,9 @@ export function AddProgramForm() {
             type="text"
             required
             placeholder="e.g. Software Engineering"
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+            className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
           />
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted">
             Must match exactly what appears in the &ldquo;program&rdquo; column
             when importing students.
           </p>
@@ -56,7 +56,7 @@ export function AddProgramForm() {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-base font-semibold text-white disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60"
         >
           {pending && <Spinner />}
           {pending ? "Adding…" : "Add program"}

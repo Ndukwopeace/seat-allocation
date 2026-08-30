@@ -25,21 +25,21 @@ export function ImportFlow() {
 
   if (imported !== null) {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-slate-200 bg-white px-4 py-10 text-center shadow-sm">
+      <div className="flex flex-col items-center gap-4 rounded-[28px] border border-hairline bg-white px-4 py-10 text-center shadow-sm">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl">
           ✓
         </div>
         <div>
-          <p className="text-lg font-semibold text-slate-900">
+          <p className="font-display text-lg font-medium text-ink">
             {imported} student{imported === 1 ? "" : "s"} imported
           </p>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted">
             They&rsquo;re now available for session allocation.
           </p>
         </div>
         <Link
           href="/students"
-          className="rounded-lg bg-slate-900 px-4 py-3 text-base font-semibold text-white active:scale-[0.99]"
+          className="rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white active:scale-[0.98]"
         >
           Back to Students
         </Link>
@@ -67,21 +67,21 @@ export function ImportFlow() {
           <PreviewStat label="Errors" value={result.errors.length} tone="error" />
         </div>
 
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted">
           Importing as{" "}
-          <span className="font-medium text-slate-700">
+          <span className="font-medium text-ink">
             {formatYear(result.expectedYear)}
           </span>
           {fileName && (
             <>
               {" "}
-              from <span className="font-medium text-slate-700">{fileName}</span>
+              from <span className="font-medium text-ink">{fileName}</span>
             </>
           )}
         </p>
 
         {result.errors.length > 0 && (
-          <details className="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+          <details className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
             <summary className="cursor-pointer text-sm font-medium text-red-700">
               View {result.errors.length} error{result.errors.length === 1 ? "" : "s"}
             </summary>
@@ -96,9 +96,9 @@ export function ImportFlow() {
         )}
 
         {result.validRows.length > 0 && (
-          <div className="overflow-x-auto rounded-xl border border-slate-200">
+          <div className="overflow-x-auto rounded-2xl border border-hairline">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-600">
+              <thead className="bg-mist text-ink/70">
                 <tr>
                   <th className="px-4 py-2">Matric No.</th>
                   <th className="px-4 py-2">Full Name</th>
@@ -108,7 +108,7 @@ export function ImportFlow() {
               </thead>
               <tbody>
                 {result.validRows.slice(0, 50).map((r) => (
-                  <tr key={r.rowNumber} className="border-t border-slate-100">
+                  <tr key={r.rowNumber} className="border-t border-hairline">
                     <td className="px-4 py-2">{r.matricNumber}</td>
                     <td className="px-4 py-2">{r.fullName}</td>
                     <td className="px-4 py-2">{r.programName}</td>
@@ -118,7 +118,7 @@ export function ImportFlow() {
               </tbody>
             </table>
             {result.validRows.length > 50 && (
-              <p className="border-t border-slate-100 px-4 py-2 text-xs text-slate-500">
+              <p className="border-t border-hairline px-4 py-2 text-xs text-muted">
                 +{result.validRows.length - 50} more row
                 {result.validRows.length - 50 === 1 ? "" : "s"} not shown
               </p>
@@ -135,7 +135,7 @@ export function ImportFlow() {
         <div className="flex gap-2">
           <Link
             href="/students"
-            className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-center text-sm font-medium text-slate-700"
+            className="flex-1 rounded-full border border-hairline px-4 py-3 text-center text-sm font-medium text-ink"
           >
             Cancel
           </Link>
@@ -143,7 +143,7 @@ export function ImportFlow() {
             type="button"
             onClick={handleConfirm}
             disabled={confirmPending || result.validRows.length === 0}
-            className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
           >
             {confirmPending && <Spinner />}
             {confirmPending
@@ -158,7 +158,7 @@ export function ImportFlow() {
   return (
     <form action={previewAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="year" className="text-sm font-medium text-slate-700">
+        <label htmlFor="year" className="text-sm font-medium text-ink">
           Year
         </label>
         <select
@@ -167,7 +167,7 @@ export function ImportFlow() {
           required
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+          className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
         >
           <option value="" disabled>
             Select the year this file is for
@@ -178,32 +178,32 @@ export function ImportFlow() {
             </option>
           ))}
         </select>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted">
           One file per year — every row in the file must be this year.
         </p>
       </div>
 
       <label
         aria-disabled={!year}
-        className={`flex flex-col items-center gap-2 rounded-xl border-2 border-dashed px-4 py-10 text-center ${
+        className={`flex flex-col items-center gap-2 rounded-[24px] border-2 border-dashed px-4 py-10 text-center ${
           year
-            ? "cursor-pointer border-slate-300 bg-slate-50"
-            : "cursor-not-allowed border-slate-200 bg-slate-50/50"
+            ? "cursor-pointer border-hairline bg-mist"
+            : "cursor-not-allowed border-hairline bg-mist/50"
         }`}
       >
         <span
           className={`flex h-12 w-12 items-center justify-center rounded-full text-xl text-white ${
-            year ? "bg-slate-900" : "bg-slate-300"
+            year ? "bg-coral" : "bg-hairline"
           }`}
         >
           ↑
         </span>
         <span
-          className={`text-sm font-medium ${year ? "text-slate-700" : "text-slate-400"}`}
+          className={`text-sm font-medium ${year ? "text-ink" : "text-muted"}`}
         >
           {year ? "Click to upload or drag and drop" : "Select a year above first"}
         </span>
-        <span className="text-xs text-slate-500">CSV or XLSX (max 10MB)</span>
+        <span className="text-xs text-muted">CSV or XLSX (max 10MB)</span>
         <input
           type="file"
           name="file"
@@ -221,12 +221,12 @@ export function ImportFlow() {
       <a
         href="/student-import-template.csv"
         download
-        className="text-center text-sm text-slate-500 underline"
+        className="text-center text-sm text-muted underline"
       >
         Download template
       </a>
 
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-muted">
         Required columns: matric_number, full_name, program, year
       </p>
 
@@ -237,7 +237,7 @@ export function ImportFlow() {
       )}
 
       {previewPending && (
-        <p className="flex items-center justify-center gap-2 text-center text-sm text-slate-500">
+        <p className="flex items-center justify-center gap-2 text-center text-sm text-muted">
           <Spinner />
           Validating file…
         </p>
@@ -256,19 +256,19 @@ function PreviewStat({
   tone?: "ok" | "error";
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-center shadow-sm">
+    <div className="rounded-2xl border border-hairline bg-white px-3 py-3 text-center shadow-sm">
       <p
-        className={`text-xl font-bold ${
+        className={`font-mono text-xl font-medium ${
           tone === "ok"
             ? "text-emerald-600"
             : tone === "error"
               ? "text-red-600"
-              : "text-slate-900"
+              : "text-ink"
         }`}
       >
         {value}
       </p>
-      <p className="text-xs text-slate-500">{label}</p>
+      <p className="text-xs text-muted">{label}</p>
     </div>
   );
 }

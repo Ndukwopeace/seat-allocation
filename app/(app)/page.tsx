@@ -55,8 +55,8 @@ export default async function DashboardPage() {
   return (
     <main className="flex flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
       <div>
-        <p className="text-sm text-slate-500">Hello, {session.name.split(" ")[0]} 👋</p>
-        <h1 className="text-lg font-semibold text-slate-900">
+        <p className="text-sm text-muted">Hello, {session.name.split(" ")[0]} 👋</p>
+        <h1 className="font-display text-xl font-medium text-ink">
           Here&rsquo;s what&rsquo;s happening today
         </h1>
       </div>
@@ -105,16 +105,16 @@ export default async function DashboardPage() {
 
       <div>
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-slate-900">
+          <h2 className="font-display text-base font-medium text-ink">
             {session.role === "ADMIN" ? "Today's Sessions" : "My Sessions"}
           </h2>
-          <Link href="/sessions" className="text-sm text-slate-500">
+          <Link href="/sessions" className="text-sm text-muted">
             View all
           </Link>
         </div>
 
         {todaysSessions.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500">
+          <p className="rounded-2xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
             No exam sessions today.
           </p>
         ) : (
@@ -125,14 +125,14 @@ export default async function DashboardPage() {
                 <li key={s.id}>
                   <Link
                     href={`/sessions/${s.id}`}
-                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm active:scale-[0.99]"
+                    className="flex items-center justify-between rounded-2xl border border-hairline bg-white px-4 py-3 shadow-sm active:scale-[0.98]"
                   >
                     <div>
-                      <p className="font-medium text-slate-900">
+                      <p className="font-medium text-ink">
                         {formatYear(s.year)}
                         {s.label ? ` — ${s.label}` : ""}
                       </p>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-muted">
                         {formatTime(s.startTime)}–{formatTime(s.endTime)}
                       </p>
                     </div>
@@ -166,10 +166,10 @@ function StatCard({
   sublabel: string;
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
-      <p className="text-2xl font-bold text-slate-900">{value.toLocaleString()}</p>
-      <p className="text-sm font-medium text-slate-700">{label}</p>
-      <p className="text-xs text-slate-500">{sublabel}</p>
+    <div className="rounded-2xl border border-hairline bg-white px-4 py-4 shadow-sm">
+      <p className="font-mono text-2xl font-medium text-ink">{value.toLocaleString()}</p>
+      <p className="text-sm font-medium text-ink">{label}</p>
+      <p className="text-xs text-muted">{sublabel}</p>
     </div>
   );
 }

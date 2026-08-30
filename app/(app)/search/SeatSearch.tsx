@@ -38,16 +38,16 @@ export function SeatSearch({ rows }: { rows: Row[] }) {
         placeholder="Search by name, matric number, or seat number"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+        className="w-full rounded-2xl border-none bg-mist px-4 py-3.5 text-base text-ink focus:outline-none focus:ring-2 focus:ring-coral/40"
         aria-label="Search allocated seats"
       />
 
       {query.trim() === "" ? (
-        <p className="rounded-xl border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500">
+        <p className="rounded-3xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
           Start typing to find a student&rsquo;s seat.
         </p>
       ) : filtered.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500">
+        <p className="rounded-3xl border border-dashed border-hairline px-4 py-6 text-center text-sm text-muted">
           No matches in any allocated session.
         </p>
       ) : (
@@ -56,18 +56,18 @@ export function SeatSearch({ rows }: { rows: Row[] }) {
             <li key={`${r.examSessionId}-${r.studentId}`}>
               <Link
                 href={`/sessions/${r.examSessionId}/students/${r.studentId}`}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm active:scale-[0.99]"
+                className="flex items-center justify-between rounded-2xl border border-hairline bg-white px-4 py-3 shadow-sm active:scale-[0.98]"
               >
                 <div>
-                  <p className="font-medium text-slate-900">{r.fullName}</p>
-                  <p className="text-sm text-slate-500">
+                  <p className="font-medium text-ink">{r.fullName}</p>
+                  <p className="text-sm text-muted">
                     {r.matricNumber} · {r.program} · {r.year}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted">
                     {r.sessionLabel} · {r.sessionDate}, {r.sessionTime}
                   </p>
                 </div>
-                <span className="rounded-full bg-slate-900 px-3 py-1 text-sm font-bold text-white">
+                <span className="rounded-full bg-coral px-3 py-1 font-mono text-sm font-semibold text-white">
                   {r.seatNumber}
                 </span>
               </Link>

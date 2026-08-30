@@ -13,8 +13,8 @@ export default async function AdminUsersPage() {
   return (
     <main className="flex flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">Users</h1>
-        <Link href="/" className="text-sm text-slate-500">
+        <h1 className="font-display text-xl font-medium text-ink">Users</h1>
+        <Link href="/" className="text-sm text-muted">
           Back
         </Link>
       </div>
@@ -25,17 +25,17 @@ export default async function AdminUsersPage() {
         {users.map((u) => (
           <li
             key={u.id}
-            className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
+            className="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-white px-4 py-3 shadow-sm"
           >
             <div className="min-w-0">
-              <p className="truncate font-medium text-slate-900">{u.name}</p>
-              <p className="truncate text-sm text-slate-500">{u.email}</p>
+              <p className="truncate font-medium text-ink">{u.name}</p>
+              <p className="truncate text-sm text-muted">{u.email}</p>
             </div>
             <div className="flex flex-none flex-col items-end gap-1">
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+              <span className="rounded-full bg-mist px-2 py-0.5 text-xs font-medium text-muted">
                 {u.role}
               </span>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-muted">
                 {u.passwordHash ? "Password + Google" : "Google only"}
               </span>
             </div>

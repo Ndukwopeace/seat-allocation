@@ -9,19 +9,43 @@
  */
 :root {
   color-scheme: light;
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f1f0ee;
+  --foreground: #17171a;
 }
 
+/*
+ * Palette extracted from the Mesh onboarding flow audit: one warm neutral
+ * ground, one committed accent (coral, reserved for the single primary
+ * action per screen), and the mist/hairline pair for anything you tap into
+ * or that separates rows. Status colors (emerald/amber/red) stay Tailwind's
+ * defaults — semantic meaning, not brand, so they're deliberately not
+ * reskinned here.
+ */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+
+  --color-canvas: #f1f0ee;
+  /* Deepened from the #FF6A45 audit swatch — that shade only hits ~2.8:1
+     against white, below WCAG AA even for large button text. This shade
+     keeps the same coral hue at ~4.8:1 with white text. */
+  --color-coral: #c94425;
+  --color-coral-soft: #ffe2d8;
+  --color-mesh-black: #131214;
+  --color-mist: #eeede9;
+  --color-hairline: #e1ddd4;
+  --color-ink: #17171a;
+  /* Darker than the audit doc's #8B877E — this app uses "muted" for real
+     12-13px body/caption text (timestamps, helper copy), which needs
+     WCAG AA's 4.5:1; #8B877E only clears ~3.6:1 at that size. */
+  --color-muted: #6e6a62;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
