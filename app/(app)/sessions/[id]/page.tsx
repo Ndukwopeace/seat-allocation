@@ -6,6 +6,7 @@ import { getActiveAllocation, getRegenerationStatus } from "@/lib/allocation";
 import { formatDate, formatTime, formatYear } from "@/lib/format";
 import { GenerateControls } from "./GenerateControls";
 import { AllocationList } from "./AllocationList";
+import { ExportPanel } from "./ExportPanel";
 
 export default async function SessionDetailPage(
   props: PageProps<"/sessions/[id]">,
@@ -110,6 +111,8 @@ export default async function SessionDetailPage(
         }
         userRole={user.role}
       />
+
+      {allocation && <ExportPanel examSessionId={id} />}
 
       {allocation && <AllocationList examSessionId={id} rows={rows} />}
     </main>

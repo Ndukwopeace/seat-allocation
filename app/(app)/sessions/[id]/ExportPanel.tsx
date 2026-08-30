@@ -1,0 +1,50 @@
+"use client";
+
+import { useState } from "react";
+
+export function ExportPanel({ examSessionId }: { examSessionId: string }) {
+  const [open, setOpen] = useState(false);
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base font-medium text-slate-700 active:scale-[0.99]"
+      >
+        Export
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="text-sm font-medium text-slate-700">Choose export format</p>
+      <a
+        href={`/sessions/${examSessionId}/export?format=pdf`}
+        className="flex items-center gap-3 rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium text-slate-900 active:scale-[0.99]"
+      >
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-100 text-red-600">
+          PDF
+        </span>
+        PDF Document
+      </a>
+      <a
+        href={`/sessions/${examSessionId}/export?format=excel`}
+        className="flex items-center gap-3 rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium text-slate-900 active:scale-[0.99]"
+      >
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+          XLS
+        </span>
+        Excel Spreadsheet
+      </a>
+      <button
+        type="button"
+        onClick={() => setOpen(false)}
+        className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700"
+      >
+        Cancel
+      </button>
+    </div>
+  );
+}
