@@ -32,6 +32,13 @@ fi
 log "Generating Prisma client..."
 npx prisma generate
 
+# tsc needs the route-typing helpers (PageProps, LayoutProps, etc.) that
+# Next.js writes to .next/types — normally produced by `next dev`/`next
+# build`, neither of which has run yet on a fresh checkout. `next typegen`
+# generates just those without a full build.
+log "Generating Next.js route types..."
+npx next typegen
+
 if [ "$SKIP_TYPECHECK" -eq 0 ]; then
   log "Type-checking..."
   npx tsc --noEmit -p tsconfig.json

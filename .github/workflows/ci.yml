@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same branch/PR.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint, typecheck, build, test
+    runs-on: ubuntu-latest
+
+    # Real Postgres for the allocation business-rule test suite — it
+    # exercises actual DB transactions/unique-constraint races, so it
+    # isn't mockable (see tests/allocation.test.ts).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: siu_app
+          POSTGRES_PASSWORD: siu_app_dev
+          POSTGRES_DB: siu_seat_allocation
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U siu_app"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://siu_app:siu_app_dev@localhost:5432/siu_seat_allocation?schema=public
+      # Only used to sign JWTs during this run — not a real secret.
+      SESSION_SECRET: ci-test-secret-do-not-use-in-production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Write .env for scripts/*.sh
+        run: |
+          cat > .env <<EOF
+          DATABASE_URL=${DATABASE_URL}
+          SESSION_SECRET=${SESSION_SECRET}
+          EOF
+
+      - name: Build (install deps, prisma generate, typecheck, lint, next build)
+        run: bash scripts/build.sh
+
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+
+      - name: Run tests
+        run: bash scripts/test.sh
