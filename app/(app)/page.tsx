@@ -14,22 +14,32 @@ export default async function DashboardPage() {
   const todayStart = startOfTodayUTC();
   const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
 
-  const [todaysSessions, allocationVersions, studentCountsByYear] = await Promise.all([
-    prisma.examSession.findMany({
-      where: { date: { gte: todayStart, lt: todayEnd } },
-      orderBy: { startTime: "asc" },
-    }),
-    prisma.allocation.groupBy({
-      by: ["examSessionId"],
-      _max: { version: true },
-    }),
-    prisma.student.groupBy({ by: ["year"], _count: { _all: true } }),
-  ]);
+  const [todaysSessions, allocationVersions, totalActiveStudents, participantCounts] =
+    await Promise.all([
+      prisma.examSession.findMany({
+        where: { date: { gte: todayStart, lt: todayEnd } },
+        orderBy: { startTime: "asc" },
+      }),
+      prisma.allocation.groupBy({
+        by: ["examSessionId"],
+        _max: { version: true },
+      }),
+      prisma.student.count({ where: { archivedAt: null } }),
+      // Per-session roster counts, not year cohort size — a session's
+      // participant list can be edited (lib/session-roster.ts) independently
+      // of the year-wide registry.
+      prisma.sessionParticipant.groupBy({
+        by: ["examSessionId"],
+        _count: { _all: true },
+      }),
+    ]);
 
   const versionBySession = new Map(
     allocationVersions.map((a) => [a.examSessionId, a._max.version ?? 0]),
   );
-  const countByYear = new Map(studentCountsByYear.map((c) => [c.year, c._count._all]));
+  const participantCountBySession = new Map(
+    participantCounts.map((p) => [p.examSessionId, p._count._all]),
+  );
 
   const todaysAllocatedCount = todaysSessions.filter(
     (s) => (versionBySession.get(s.id) ?? 0) > 0,
@@ -37,8 +47,8 @@ export default async function DashboardPage() {
   const todaysPendingCount = todaysSessions.length - todaysAllocatedCount;
 
   const yearsToday = new Set(todaysSessions.map((s) => s.year));
-  const studentsToday = [...yearsToday].reduce(
-    (sum, year) => sum + (countByYear.get(year) ?? 0),
+  const studentsToday = todaysSessions.reduce(
+    (sum, s) => sum + (participantCountBySession.get(s.id) ?? 0),
     0,
   );
 
@@ -56,7 +66,7 @@ export default async function DashboardPage() {
           <>
             <StatCard
               label="Total Students"
-              value={studentCountsByYear.reduce((s, c) => s + c._count._all, 0)}
+              value={totalActiveStudents}
               sublabel="All years"
             />
             <StatCard
@@ -159,7 +169,7 @@ function StatCard({
     <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
       <p className="text-2xl font-bold text-slate-900">{value.toLocaleString()}</p>
       <p className="text-sm font-medium text-slate-700">{label}</p>
-      <p className="text-xs text-slate-400">{sublabel}</p>
+      <p className="text-xs text-slate-500">{sublabel}</p>
     </div>
   );
 }

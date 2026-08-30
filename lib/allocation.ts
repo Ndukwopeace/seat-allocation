@@ -4,7 +4,7 @@
 
 import { randomInt } from "node:crypto";
 import { Prisma } from "@/app/generated/prisma/client";
-import type { Role, YearGroup } from "@/app/generated/prisma/enums";
+import type { Role } from "@/app/generated/prisma/enums";
 import { prisma } from "@/lib/prisma";
 
 // ---------------------------------------------------------------------------
@@ -102,12 +102,17 @@ async function loadExamSessionOrThrow(examSessionId: string) {
 }
 
 /**
- * The registered population for a session is every student sharing the
- * session's year — there is no separate per-session registration step in
- * Version 1 (BR-06: all programs in a year share one randomized pool).
+ * A session's registered population is its SessionParticipant roster —
+ * seeded from the year cohort at session-creation time, but editable
+ * afterwards (see lib/session-roster.ts), so this reads the roster rather
+ * than re-deriving from Student.year on every generate/regenerate.
  */
-async function loadPopulation(year: YearGroup) {
-  return prisma.student.findMany({ where: { year } });
+async function loadPopulation(examSessionId: string) {
+  const participants = await prisma.sessionParticipant.findMany({
+    where: { examSessionId },
+    select: { student: true },
+  });
+  return participants.map((p) => p.student);
 }
 
 async function loadAllocationHistory(examSessionId: string) {
@@ -276,14 +281,14 @@ export async function generateInitialAllocation(
   examSessionId: string,
   actingUser: ActingUser,
 ) {
-  const examSession = await loadExamSessionOrThrow(examSessionId);
+  await loadExamSessionOrThrow(examSessionId);
 
   const existing = await prisma.allocation.findFirst({
     where: { examSessionId },
   });
   if (existing) throw new AlreadyGeneratedError();
 
-  const population = await loadPopulation(examSession.year);
+  const population = await loadPopulation(examSessionId);
   if (population.length === 0) throw new EmptyPopulationError();
 
   return createAllocationVersion({
@@ -309,7 +314,7 @@ export async function regenerateAllocation(
   actingUser: ActingUser,
   reason?: string,
 ) {
-  const examSession = await loadExamSessionOrThrow(examSessionId);
+  await loadExamSessionOrThrow(examSessionId);
 
   const history = await loadAllocationHistory(examSessionId);
   if (history.length === 0) throw new NotYetGeneratedError();
@@ -335,7 +340,7 @@ export async function regenerateAllocation(
     overrideReason = trimmedReason;
   }
 
-  const population = await loadPopulation(examSession.year);
+  const population = await loadPopulation(examSessionId);
   if (population.length === 0) throw new EmptyPopulationError();
 
   return createAllocationVersion({

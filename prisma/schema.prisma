@@ -67,18 +67,27 @@ model Student {
   year          YearGroup
   programId     String
   createdAt     DateTime  @default(now())
+  // Set when a student is removed from the app but has allocation history
+  // that must be preserved (past seat assignments, audit trail) — an
+  // archived student is hidden from the active registry, search, and new
+  // session rosters, but their historical records stay intact. A student
+  // with no history is hard-deleted instead, so this is never set for them.
+  archivedAt    DateTime?
 
-  program         Program          @relation(fields: [programId], references: [id])
-  seatAssignments SeatAssignment[]
+  program             Program              @relation(fields: [programId], references: [id])
+  seatAssignments     SeatAssignment[]
+  sessionParticipants SessionParticipant[]
 
   @@index([year])
   @@map("students")
 }
 
-// One sitting (a year group writing at a given date/time). The registered
-// population for a session is every Student whose `year` matches the
-// session's `year` — there is no separate per-session registration step in
-// Version 1, matching BR-06 (all programs in the same year share one pool).
+// One sitting (a year group writing at a given date/time). A session's
+// registered population is its SessionParticipant roster — seeded from
+// every Student whose `year` matches the session's `year` at creation time
+// (BR-06: all programs in the same year share one pool by default), but
+// editable afterwards so a specific student can be added or removed for
+// that one session without changing the year-wide registry.
 model ExamSession {
   id        String    @id @default(cuid())
   year      YearGroup
@@ -90,9 +99,24 @@ model ExamSession {
 
   allocations Allocation[]
   auditLogs   AuditLog[]
+  participants SessionParticipant[]
 
   @@index([year, date])
   @@map("exam_sessions")
+}
+
+// One student's membership in one session's roster — see ExamSession.
+model SessionParticipant {
+  id            String   @id @default(cuid())
+  examSessionId String
+  studentId     String
+  addedAt       DateTime @default(now())
+
+  examSession ExamSession @relation(fields: [examSessionId], references: [id])
+  student     Student     @relation(fields: [studentId], references: [id])
+
+  @@unique([examSessionId, studentId])
+  @@map("session_participants")
 }
 
 // A single generation/regeneration event for a session. The *active*

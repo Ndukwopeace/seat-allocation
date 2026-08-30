@@ -1,10 +1,12 @@
 import { prisma } from "../lib/prisma";
 import { hashPassword } from "../lib/password";
+import { seedInitialParticipants } from "../lib/session-roster";
 
 export async function resetDb() {
   await prisma.auditLog.deleteMany();
   await prisma.seatAssignment.deleteMany();
   await prisma.allocation.deleteMany();
+  await prisma.sessionParticipant.deleteMany();
   await prisma.examSession.deleteMany();
   await prisma.student.deleteMany();
   await prisma.program.deleteMany();
@@ -26,8 +28,10 @@ export async function makeProgram(name: string) {
   return prisma.program.create({ data: { name } });
 }
 
+// Mirrors createExamSession's real behavior: a new session's roster starts
+// as every active student sharing its year (BR-06 default).
 export async function makeExamSession(year: "YEAR_1" | "YEAR_2" = "YEAR_1") {
-  return prisma.examSession.create({
+  const session = await prisma.examSession.create({
     data: {
       year,
       label: "Test Session",
@@ -36,6 +40,8 @@ export async function makeExamSession(year: "YEAR_1" | "YEAR_2" = "YEAR_1") {
       endTime: new Date("2026-06-01T11:00:00Z"),
     },
   });
+  await seedInitialParticipants(session.id, year);
+  return session;
 }
 
 export async function makeStudents(

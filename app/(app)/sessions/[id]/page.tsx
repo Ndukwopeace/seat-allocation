@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getActiveAllocation, getRegenerationStatus } from "@/lib/allocation";
+import { listParticipants, listCandidateStudents } from "@/lib/session-roster";
 import { formatDate, formatTime, formatYear } from "@/lib/format";
 import { GenerateControls } from "./GenerateControls";
 import { AllocationList } from "./AllocationList";
 import { ExportPanel } from "./ExportPanel";
+import { ManageStudents } from "./ManageStudents";
 
 export default async function SessionDetailPage(
   props: PageProps<"/sessions/[id]">,
@@ -17,30 +19,37 @@ export default async function SessionDetailPage(
   const session = await prisma.examSession.findUnique({ where: { id } });
   if (!session) notFound();
 
-  const [studentCount, allocation, regenStatus, programBreakdown] = await Promise.all([
-    prisma.student.count({ where: { year: session.year } }),
+  const [participants, allocation, regenStatus, candidates] = await Promise.all([
+    listParticipants(id),
     getActiveAllocation(id),
     getRegenerationStatus(id),
-    prisma.student.groupBy({
-      by: ["programId"],
-      where: { year: session.year },
-      _count: { _all: true },
-    }),
+    user.role === "ADMIN" ? listCandidateStudents(id) : Promise.resolve([]),
   ]);
 
-  const programs =
-    programBreakdown.length > 0
-      ? await prisma.program.findMany({
-          where: { id: { in: programBreakdown.map((p) => p.programId) } },
-        })
-      : [];
-  const programNameById = new Map(programs.map((p) => [p.id, p.name]));
-  const programCounts = programBreakdown
-    .map((p) => ({
-      name: programNameById.get(p.programId) ?? "Unknown",
-      count: p._count._all,
-    }))
+  const studentCount = participants.length;
+
+  const countsByProgram = new Map<string, number>();
+  for (const s of participants) {
+    countsByProgram.set(s.program.name, (countsByProgram.get(s.program.name) ?? 0) + 1);
+  }
+  const programCounts = [...countsByProgram.entries()]
+    .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count);
+
+  const rosterRows = participants.map((s) => ({
+    id: s.id,
+    matricNumber: s.matricNumber,
+    fullName: s.fullName,
+    program: s.program.name,
+    year: formatYear(s.year),
+  }));
+  const candidateRows = candidates.map((s) => ({
+    id: s.id,
+    matricNumber: s.matricNumber,
+    fullName: s.fullName,
+    program: s.program.name,
+    year: formatYear(s.year),
+  }));
 
   const rows =
     allocation?.seatAssignments.map((a) => ({
@@ -100,6 +109,14 @@ export default async function SessionDetailPage(
             ))}
           </ul>
         </div>
+      )}
+
+      {user.role === "ADMIN" && (
+        <ManageStudents
+          examSessionId={id}
+          participants={rosterRows}
+          candidates={candidateRows}
+        />
       )}
 
       <GenerateControls

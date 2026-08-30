@@ -10,6 +10,11 @@ import {
   regenerateAllocation,
   AllocationError,
 } from "@/lib/allocation";
+import {
+  addParticipant,
+  removeParticipant,
+  seedInitialParticipants,
+} from "@/lib/session-roster";
 import { YearGroup } from "@/app/generated/prisma/enums";
 
 export type ActionState = { error?: string };
@@ -62,7 +67,41 @@ export async function createExamSession(
     },
   });
 
+  // BR-06 default: every active student sharing the session's year. Editable
+  // afterwards via the session detail page's roster panel.
+  await seedInitialParticipants(session.id, year);
+
   redirect(`/sessions/${session.id}`);
+}
+
+const studentIdSchema = z.string().min(1);
+
+// Admin-only: changing who a session's population includes is as
+// significant as creating the session itself (FR-SES-01's rationale).
+export async function addParticipantAction(
+  examSessionId: string,
+  studentId: string,
+): Promise<ActionState> {
+  await requireUser("ADMIN");
+  const parsed = studentIdSchema.safeParse(studentId);
+  if (!parsed.success) return { error: "Choose a student to add." };
+
+  await addParticipant(examSessionId, parsed.data);
+  revalidatePath(`/sessions/${examSessionId}`);
+  return {};
+}
+
+export async function removeParticipantAction(
+  examSessionId: string,
+  studentId: string,
+): Promise<ActionState> {
+  await requireUser("ADMIN");
+  const parsed = studentIdSchema.safeParse(studentId);
+  if (!parsed.success) return { error: "Choose a student to remove." };
+
+  await removeParticipant(examSessionId, parsed.data);
+  revalidatePath(`/sessions/${examSessionId}`);
+  return {};
 }
 
 function messageFor(err: unknown): string {

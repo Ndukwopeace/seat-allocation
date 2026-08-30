@@ -13,16 +13,22 @@ function startOfTodayUTC(): Date {
 export default async function SessionsPage() {
   const user = await requireUser();
 
-  const [sessions, studentCounts, allocationVersions] = await Promise.all([
+  const [sessions, participantCounts, allocationVersions] = await Promise.all([
     prisma.examSession.findMany({ orderBy: { date: "desc" } }),
-    prisma.student.groupBy({ by: ["year"], _count: { _all: true } }),
+    // Per-session roster counts, not year cohort size — see lib/session-roster.ts.
+    prisma.sessionParticipant.groupBy({
+      by: ["examSessionId"],
+      _count: { _all: true },
+    }),
     prisma.allocation.groupBy({
       by: ["examSessionId"],
       _max: { version: true },
     }),
   ]);
 
-  const countByYear = new Map(studentCounts.map((c) => [c.year, c._count._all]));
+  const participantCountBySession = new Map(
+    participantCounts.map((c) => [c.examSessionId, c._count._all]),
+  );
   const versionBySession = new Map(
     allocationVersions.map((a) => [a.examSessionId, a._max.version ?? 0]),
   );
@@ -36,7 +42,7 @@ export default async function SessionsPage() {
     dayHeading: formatDayHeading(session.date),
     startTime: formatTime(session.startTime),
     endTime: formatTime(session.endTime),
-    studentCount: countByYear.get(session.year) ?? 0,
+    studentCount: participantCountBySession.get(session.id) ?? 0,
     version: versionBySession.get(session.id) ?? 0,
     isUpcoming: session.date >= todayStart,
   }));

@@ -8,6 +8,7 @@ export default async function StudentsPage() {
   await requireUser("ADMIN");
 
   const students = await prisma.student.findMany({
+    where: { archivedAt: null },
     orderBy: [{ year: "asc" }, { matricNumber: "asc" }],
     include: { program: true },
   });
