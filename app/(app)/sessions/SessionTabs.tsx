@@ -50,6 +50,7 @@ export function SessionTabs({
             key={t}
             type="button"
             onClick={() => setTab(t)}
+            aria-pressed={tab === t}
             className={`flex-1 rounded-md py-2 text-sm font-medium capitalize ${
               tab === t ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
             }`}

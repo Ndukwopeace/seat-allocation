@@ -80,7 +80,7 @@ export default async function DashboardPage() {
             <StatCard
               label="Today's Sessions"
               value={todaysSessions.length}
-              sublabel={todaysSessions.length === 1 ? "Upcoming" : "Upcoming"}
+              sublabel={todaysSessions.length === 1 ? "Session" : "Sessions"}
             />
             <StatCard
               label="Students Today"

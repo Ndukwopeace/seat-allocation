@@ -65,6 +65,7 @@ export function AllocationList({
             key={key}
             type="button"
             onClick={() => setSortKey(key)}
+            aria-pressed={sortKey === key}
             className={`rounded-full px-3 py-1 ${
               sortKey === key
                 ? "bg-slate-900 text-white"

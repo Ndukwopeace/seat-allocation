@@ -47,7 +47,7 @@ export default async function LoginPage(props: PageProps<"/login">) {
           Continue with Google
         </a>
 
-        <div className="my-6 flex items-center gap-3 text-xs text-slate-400">
+        <div className="my-6 flex items-center gap-3 text-xs text-slate-500">
           <div className="h-px flex-1 bg-slate-200" />
           or
           <div className="h-px flex-1 bg-slate-200" />

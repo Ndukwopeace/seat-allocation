@@ -108,7 +108,7 @@ export function ImportFlow() {
               </tbody>
             </table>
             {result.validRows.length > 50 && (
-              <p className="border-t border-slate-100 px-4 py-2 text-xs text-slate-400">
+              <p className="border-t border-slate-100 px-4 py-2 text-xs text-slate-500">
                 +{result.validRows.length - 50} more row
                 {result.validRows.length - 50 === 1 ? "" : "s"} not shown
               </p>
@@ -153,7 +153,7 @@ export function ImportFlow() {
         <span className="text-sm font-medium text-slate-700">
           Click to upload or drag and drop
         </span>
-        <span className="text-xs text-slate-400">CSV or XLSX (max 10MB)</span>
+        <span className="text-xs text-slate-500">CSV or XLSX (max 10MB)</span>
         <input
           type="file"
           name="file"

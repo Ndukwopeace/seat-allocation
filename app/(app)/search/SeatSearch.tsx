@@ -63,7 +63,7 @@ export function SeatSearch({ rows }: { rows: Row[] }) {
                   <p className="text-sm text-slate-500">
                     {r.matricNumber} · {r.program} · {r.year}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     {r.sessionLabel} · {r.sessionDate}, {r.sessionTime}
                   </p>
                 </div>

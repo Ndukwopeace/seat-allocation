@@ -55,7 +55,7 @@ export default async function AuditHistoryPage(
                 <span className="font-medium text-slate-900">
                   Version {entry.toVersion}
                   {entry.fromVersion !== null && (
-                    <span className="font-normal text-slate-400">
+                    <span className="font-normal text-slate-500">
                       {" "}
                       (from {entry.fromVersion})
                     </span>

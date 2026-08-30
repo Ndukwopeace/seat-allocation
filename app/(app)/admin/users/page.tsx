@@ -35,7 +35,7 @@ export default async function AdminUsersPage() {
               <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
                 {u.role}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500">
                 {u.passwordHash ? "Password + Google" : "Google only"}
               </span>
             </div>
