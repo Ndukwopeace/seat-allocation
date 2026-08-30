@@ -1,0 +1,158 @@
+// SIU Exam Seat Allocation System — core domain model (Version 1)
+// See docs/requirements.md for the source SRS this schema implements.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  INVIGILATOR
+}
+
+enum YearGroup {
+  YEAR_1
+  YEAR_2
+  YEAR_3
+  YEAR_4
+  YEAR_5
+}
+
+enum AllocationMethod {
+  GENERATE // initial generation -> always version 1
+  REGENERATE_INVIGILATOR // invigilator's one allowed regeneration -> version 2
+  REGENERATE_ADMIN_OVERRIDE // admin override past the limit -> version 3+
+}
+
+enum AuditAction {
+  ALLOCATION_GENERATED
+  ALLOCATION_REGENERATED
+  ALLOCATION_ADMIN_OVERRIDE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+
+  allocationsGenerated Allocation[]
+  auditLogs            AuditLog[]
+
+  @@map("users")
+}
+
+model Program {
+  id   String @id @default(cuid())
+  name String @unique
+
+  students Student[]
+
+  @@map("programs")
+}
+
+// The student registry, imported once and reused across sessions.
+model Student {
+  id            String    @id @default(cuid())
+  matricNumber  String    @unique // BR-13: uniquely identifies a student in the registry
+  fullName      String
+  year          YearGroup
+  programId     String
+  createdAt     DateTime  @default(now())
+
+  program         Program          @relation(fields: [programId], references: [id])
+  seatAssignments SeatAssignment[]
+
+  @@index([year])
+  @@map("students")
+}
+
+// One sitting (a year group writing at a given date/time). The registered
+// population for a session is every Student whose `year` matches the
+// session's `year` — there is no separate per-session registration step in
+// Version 1, matching BR-06 (all programs in the same year share one pool).
+model ExamSession {
+  id        String    @id @default(cuid())
+  year      YearGroup
+  label     String? // optional descriptive label, e.g. "Semester 1 Finals"
+  date      DateTime  @db.Date
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime  @default(now())
+
+  allocations Allocation[]
+  auditLogs   AuditLog[]
+
+  @@index([year, date])
+  @@map("exam_sessions")
+}
+
+// A single generation/regeneration event for a session. The *active*
+// allocation for a session is always the row with the highest `version` —
+// there is no separate isActive flag to keep in sync; older versions are
+// simply superseded and retained for history/audit (guardrail #5).
+model Allocation {
+  id              String           @id @default(cuid())
+  examSessionId   String
+  version         Int
+  method          AllocationMethod
+  generatedById   String
+  generatedAt     DateTime         @default(now())
+  overrideReason  String? // required and stored when method = REGENERATE_ADMIN_OVERRIDE
+
+  examSession     ExamSession      @relation(fields: [examSessionId], references: [id])
+  generatedBy     User             @relation(fields: [generatedById], references: [id])
+  seatAssignments SeatAssignment[]
+  auditLogs       AuditLog[]
+
+  // Enforces one row per (session, version) — the DB is the source of truth
+  // for "who won" when two generate/regenerate requests race (FR-ALL-10):
+  // both try to insert the same next version, one succeeds, one gets a
+  // unique-constraint violation and is rejected.
+  @@unique([examSessionId, version])
+  @@map("allocations")
+}
+
+// One student's seat number within one allocation version.
+model SeatAssignment {
+  id           String @id @default(cuid())
+  allocationId String
+  studentId    String
+  seatNumber   Int
+
+  allocation Allocation @relation(fields: [allocationId], references: [id])
+  student    Student    @relation(fields: [studentId], references: [id])
+
+  @@unique([allocationId, seatNumber]) // BR-02: unique seat number within a session's active version
+  @@unique([allocationId, studentId]) // BR-01: exactly one seat number per student
+  @@map("seat_assignments")
+}
+
+// Explicit audit trail (FR-AUD-01..04), separate from the Allocation
+// version history: history says *what* the active allocation is, audit
+// says *who did what and why*, including the admin override reason.
+model AuditLog {
+  id            String      @id @default(cuid())
+  userId        String
+  examSessionId String
+  allocationId  String // the Allocation row this event produced
+  action        AuditAction
+  fromVersion   Int? // null for the initial generation
+  toVersion     Int
+  reason        String? // required for ALLOCATION_ADMIN_OVERRIDE
+  createdAt     DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  examSession ExamSession @relation(fields: [examSessionId], references: [id])
+  allocation  Allocation  @relation(fields: [allocationId], references: [id])
+
+  @@index([examSessionId])
+  @@map("audit_logs")
+}
