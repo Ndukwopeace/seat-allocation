@@ -1,6 +1,14 @@
 @import "tailwindcss";
 
+/*
+ * Every screen is built and tested against the light-theme mockups only —
+ * no component has dark-background-safe colors. Pin color-scheme so mobile
+ * browsers (which otherwise flip body background to near-black under OS
+ * dark mode while leaving hardcoded slate-on-white component colors
+ * untouched) render the same designed theme for every user.
+ */
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -10,13 +18,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
