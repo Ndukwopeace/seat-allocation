@@ -24,6 +24,21 @@ export function formatDate(date: Date): string {
   }).format(date);
 }
 
+/** Day-group heading for the sessions list, e.g. "Monday, 31 August 2026". */
+export function formatDayHeading(date: Date): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
+/** Stable, timezone-safe grouping key for a session date, e.g. "2026-08-31". */
+export function dayKeyFor(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
 export function formatTime(date: Date): string {
   return new Intl.DateTimeFormat("en-GB", {
     hour: "2-digit",

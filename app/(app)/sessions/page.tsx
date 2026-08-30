@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { formatDate, formatTime, formatYear } from "@/lib/format";
+import { dayKeyFor, formatDayHeading, formatTime, formatYear } from "@/lib/format";
 import { CreateSessionForm } from "./CreateSessionForm";
 import { SessionTabs } from "./SessionTabs";
 
@@ -32,7 +32,8 @@ export default async function SessionsPage() {
     id: session.id,
     yearLabel: formatYear(session.year),
     label: session.label,
-    date: formatDate(session.date),
+    dayKey: dayKeyFor(session.date),
+    dayHeading: formatDayHeading(session.date),
     startTime: formatTime(session.startTime),
     endTime: formatTime(session.endTime),
     studentCount: countByYear.get(session.year) ?? 0,
