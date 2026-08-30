@@ -12,6 +12,10 @@ export function formatYear(year: YearGroup): string {
   return YEAR_LABELS[year];
 }
 
+export const YEAR_OPTIONS: { value: YearGroup; label: string }[] = (
+  Object.keys(YEAR_LABELS) as YearGroup[]
+).map((value) => ({ value, label: YEAR_LABELS[value] }));
+
 export function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",

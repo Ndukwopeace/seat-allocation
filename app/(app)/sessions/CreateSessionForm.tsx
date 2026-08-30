@@ -2,17 +2,10 @@
 
 import { useActionState } from "react";
 import { Spinner } from "@/app/Spinner";
+import { YEAR_OPTIONS } from "@/lib/format";
 import { createExamSession, type ActionState } from "./actions";
 
 const initialState: ActionState = {};
-
-const YEAR_OPTIONS = [
-  { value: "YEAR_1", label: "Year 1" },
-  { value: "YEAR_2", label: "Year 2" },
-  { value: "YEAR_3", label: "Year 3" },
-  { value: "YEAR_4", label: "Year 4" },
-  { value: "YEAR_5", label: "Year 5" },
-];
 
 export function CreateSessionForm() {
   const [state, formAction, pending] = useActionState(

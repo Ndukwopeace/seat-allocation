@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState, useTransition } from "react";
 import { Spinner } from "@/app/Spinner";
+import { YEAR_OPTIONS, formatYear } from "@/lib/format";
 import {
   previewImport,
   confirmImportAction,
@@ -20,6 +21,7 @@ export function ImportFlow() {
   const [confirmError, setConfirmError] = useState<string | null>(null);
   const [imported, setImported] = useState<number | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [year, setYear] = useState("");
 
   if (imported !== null) {
     return (
@@ -65,11 +67,18 @@ export function ImportFlow() {
           <PreviewStat label="Errors" value={result.errors.length} tone="error" />
         </div>
 
-        {fileName && (
-          <p className="text-sm text-slate-500">
-            From <span className="font-medium text-slate-700">{fileName}</span>
-          </p>
-        )}
+        <p className="text-sm text-slate-500">
+          Importing as{" "}
+          <span className="font-medium text-slate-700">
+            {formatYear(result.expectedYear)}
+          </span>
+          {fileName && (
+            <>
+              {" "}
+              from <span className="font-medium text-slate-700">{fileName}</span>
+            </>
+          )}
+        </p>
 
         {result.errors.length > 0 && (
           <details className="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
@@ -148,12 +157,51 @@ export function ImportFlow() {
 
   return (
     <form action={previewAction} className="flex flex-col gap-4">
-      <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-xl text-white">
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="year" className="text-sm font-medium text-slate-700">
+          Year
+        </label>
+        <select
+          id="year"
+          name="year"
+          required
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base"
+        >
+          <option value="" disabled>
+            Select the year this file is for
+          </option>
+          {YEAR_OPTIONS.map((y) => (
+            <option key={y.value} value={y.value}>
+              {y.label}
+            </option>
+          ))}
+        </select>
+        <p className="text-xs text-slate-500">
+          One file per year — every row in the file must be this year.
+        </p>
+      </div>
+
+      <label
+        aria-disabled={!year}
+        className={`flex flex-col items-center gap-2 rounded-xl border-2 border-dashed px-4 py-10 text-center ${
+          year
+            ? "cursor-pointer border-slate-300 bg-slate-50"
+            : "cursor-not-allowed border-slate-200 bg-slate-50/50"
+        }`}
+      >
+        <span
+          className={`flex h-12 w-12 items-center justify-center rounded-full text-xl text-white ${
+            year ? "bg-slate-900" : "bg-slate-300"
+          }`}
+        >
           ↑
         </span>
-        <span className="text-sm font-medium text-slate-700">
-          Click to upload or drag and drop
+        <span
+          className={`text-sm font-medium ${year ? "text-slate-700" : "text-slate-400"}`}
+        >
+          {year ? "Click to upload or drag and drop" : "Select a year above first"}
         </span>
         <span className="text-xs text-slate-500">CSV or XLSX (max 10MB)</span>
         <input
@@ -161,6 +209,7 @@ export function ImportFlow() {
           name="file"
           accept=".csv,.xlsx"
           required
+          disabled={!year}
           className="sr-only"
           onChange={(e) => {
             setFileName(e.currentTarget.files?.[0]?.name ?? null);

@@ -5,6 +5,7 @@
 import { Readable } from "node:stream";
 import ExcelJS from "exceljs";
 import { prisma } from "./prisma";
+import { formatYear } from "./format";
 import type { YearGroup } from "@/app/generated/prisma/enums";
 
 export class ImportError extends Error {}
@@ -136,6 +137,7 @@ export type ValidationResult = {
   totalRows: number;
   validRows: ValidStudentRow[];
   errors: RowError[];
+  expectedYear: YearGroup;
 };
 
 function parseYear(raw: string): YearGroup | null {
@@ -145,14 +147,19 @@ function parseYear(raw: string): YearGroup | null {
 
 /**
  * Pure validation: given raw rows, the set of matric numbers already
- * registered, and the known programs, decides which rows are importable.
+ * registered, the known programs, and the single year this import is for,
+ * decides which rows are importable.
  * FR-STU-04: flags duplicate matric numbers (within the file and against
- * the existing registry), missing required fields, and invalid year values.
+ * the existing registry), missing required fields, invalid year values, and
+ * (BR: one file per year) rows whose year doesn't match the selected import
+ * year — this keeps a file meant for one year group from silently mixing
+ * students into another year if the wrong file gets uploaded.
  */
 export function validateRows(
   rows: RawRow[],
   existingMatricNumbers: ReadonlySet<string>,
   programsByName: ReadonlyMap<string, { id: string; name: string }>,
+  expectedYear: YearGroup,
 ): ValidationResult {
   const errors: RowError[] = [];
   const validRows: ValidStudentRow[] = [];
@@ -191,6 +198,14 @@ export function validateRows(
       continue;
     }
 
+    if (year !== expectedYear) {
+      errors.push({
+        rowNumber: row.rowNumber,
+        message: `This row is ${formatYear(year)}, but you selected ${formatYear(expectedYear)} for this import.`,
+      });
+      continue;
+    }
+
     const program = programsByName.get(row.program.trim().toLowerCase());
     if (!program) {
       errors.push({
@@ -211,13 +226,14 @@ export function validateRows(
     });
   }
 
-  return { totalRows: rows.length, validRows, errors };
+  return { totalRows: rows.length, validRows, errors, expectedYear };
 }
 
 /** I/O wrapper: loads current DB state and runs validateRows against it. */
 export async function parseAndValidate(
   buffer: Buffer,
   filename: string,
+  expectedYear: YearGroup,
 ): Promise<ValidationResult> {
   const [rows, existing, programs] = await Promise.all([
     parseSpreadsheet(buffer, filename),
@@ -230,7 +246,7 @@ export async function parseAndValidate(
     programs.map((p) => [p.name.toLowerCase(), { id: p.id, name: p.name }]),
   );
 
-  return validateRows(rows, existingMatricNumbers, programsByName);
+  return validateRows(rows, existingMatricNumbers, programsByName, expectedYear);
 }
 
 /**

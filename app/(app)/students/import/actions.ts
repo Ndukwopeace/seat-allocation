@@ -1,7 +1,9 @@
 "use server";
 
+import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
+import { YearGroup } from "@/app/generated/prisma/enums";
 import {
   parseAndValidate,
   commitImport,
@@ -9,6 +11,8 @@ import {
   type ValidStudentRow,
   type ValidationResult,
 } from "@/lib/import";
+
+const yearSchema = z.enum(YearGroup);
 
 export type PreviewState = {
   error?: string;
@@ -21,6 +25,11 @@ export async function previewImport(
 ): Promise<PreviewState> {
   await requireUser("ADMIN");
 
+  const yearParsed = yearSchema.safeParse(formData.get("year"));
+  if (!yearParsed.success) {
+    return { error: "Select which year this file is for." };
+  }
+
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
     return { error: "Choose a CSV or Excel file first." };
@@ -29,7 +38,7 @@ export async function previewImport(
   const buffer = Buffer.from(await file.arrayBuffer());
 
   try {
-    const result = await parseAndValidate(buffer, file.name);
+    const result = await parseAndValidate(buffer, file.name, yearParsed.data);
     return { result };
   } catch (err) {
     if (err instanceof ImportError) return { error: err.message };
