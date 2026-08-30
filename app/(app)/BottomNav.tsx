@@ -95,6 +95,17 @@ const TABS: Record<Role, Tab[]> = {
       ),
     },
     {
+      href: "/search",
+      label: "Search",
+      match: (p) => p.startsWith("/search"),
+      icon: () => (
+        <svg {...ICON_PROPS}>
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+      ),
+    },
+    {
       href: "/more",
       label: "More",
       match: (p) => p.startsWith("/more"),

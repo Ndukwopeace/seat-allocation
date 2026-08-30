@@ -19,6 +19,14 @@ export default async function MorePage() {
       <nav className="flex flex-col gap-3">
         {session.role === "ADMIN" && (
           <Link
+            href="/search"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-base font-medium text-slate-900 shadow-sm active:scale-[0.99]"
+          >
+            Seat Search
+          </Link>
+        )}
+        {session.role === "ADMIN" && (
+          <Link
             href="/admin/users"
             className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-base font-medium text-slate-900 shadow-sm active:scale-[0.99]"
           >

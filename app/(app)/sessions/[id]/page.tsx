@@ -83,7 +83,7 @@ export default async function SessionDetailPage(
         <SessionStat label="Allocated" value={allocation ? "Yes" : "No"} />
       </div>
 
-      {user.role === "ADMIN" && programCounts.length > 0 && (
+      {programCounts.length > 0 && (
         <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
           <p className="mb-2 text-sm font-semibold text-slate-900">
             Programs in this session

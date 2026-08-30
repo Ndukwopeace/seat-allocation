@@ -147,6 +147,53 @@ export async function getActiveAllocation(examSessionId: string) {
   });
 }
 
+/**
+ * Every seat assignment belonging to an *active* (highest-version)
+ * allocation, across all sessions — backs the global seat search so an
+ * invigilator can find a student's seat without knowing which session it's
+ * under (FR-EXP-06-style lookup, not itself in the SRS export section).
+ */
+export async function listActiveAllocationEntries() {
+  const activeVersions = await prisma.allocation.groupBy({
+    by: ["examSessionId"],
+    _max: { version: true },
+  });
+  if (activeVersions.length === 0) return [];
+
+  const activeAllocations = await prisma.allocation.findMany({
+    where: {
+      OR: activeVersions.map((v) => ({
+        examSessionId: v.examSessionId,
+        version: v._max.version as number,
+      })),
+    },
+    include: {
+      examSession: true,
+      seatAssignments: {
+        orderBy: { seatNumber: "asc" },
+        include: { student: { include: { program: true } } },
+      },
+    },
+  });
+
+  return activeAllocations.flatMap((allocation) =>
+    allocation.seatAssignments.map((seat) => ({
+      examSessionId: allocation.examSessionId,
+      studentId: seat.studentId,
+      seatNumber: seat.seatNumber,
+      matricNumber: seat.student.matricNumber,
+      fullName: seat.student.fullName,
+      program: seat.student.program.name,
+      year: seat.student.year,
+      sessionLabel: allocation.examSession.label,
+      sessionYear: allocation.examSession.year,
+      sessionDate: allocation.examSession.date,
+      sessionStartTime: allocation.examSession.startTime,
+      sessionEndTime: allocation.examSession.endTime,
+    })),
+  );
+}
+
 export async function getRegenerationStatus(examSessionId: string) {
   const history = await loadAllocationHistory(examSessionId);
   const invigilatorRegenUsed = history.some(
