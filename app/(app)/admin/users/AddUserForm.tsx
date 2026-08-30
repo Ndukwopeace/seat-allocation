@@ -1,12 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Spinner } from "@/app/Spinner";
 import { createUser, type ActionState } from "./actions";
 
 const initialState: ActionState = {};
 
 export function AddUserForm() {
+  const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(createUser, initialState);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -16,15 +17,24 @@ export function AddUserForm() {
     }
   }, [state.success]);
 
-  return (
-    <details className="rounded-3xl border border-hairline bg-white shadow-sm">
-      <summary className="cursor-pointer px-4 py-4 text-base font-medium text-ink">
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="w-full rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white active:scale-[0.98]"
+      >
         + Add user
-      </summary>
+      </button>
+    );
+  }
+
+  return (
+    <div className="rounded-3xl border border-hairline bg-white p-4 shadow-sm">
       <form
         ref={formRef}
         action={formAction}
-        className="flex flex-col gap-4 px-4 pb-4"
+        className="flex flex-col gap-4"
       >
         <div className="flex flex-col gap-1.5">
           <label htmlFor="name" className="text-sm font-medium text-ink">
@@ -102,15 +112,24 @@ export function AddUserForm() {
           <p className="text-sm text-emerald-600">User added.</p>
         )}
 
-        <button
-          type="submit"
-          disabled={pending}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60"
-        >
-          {pending && <Spinner />}
-          {pending ? "Adding…" : "Add user"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="flex-1 rounded-full border border-hairline bg-white px-4 py-3 text-sm font-medium text-ink"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={pending}
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+          >
+            {pending && <Spinner />}
+            {pending ? "Adding…" : "Add user"}
+          </button>
+        </div>
       </form>
-    </details>
+    </div>
   );
 }

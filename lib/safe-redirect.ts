@@ -4,5 +4,5 @@
 // straight to an attacker's site (open redirect).
 export function safeNextPath(next: string | null | undefined): string {
   if (next && next.startsWith("/") && !next.startsWith("//")) return next;
-  return "/";
+  return "/sessions";
 }

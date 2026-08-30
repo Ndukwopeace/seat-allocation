@@ -13,7 +13,7 @@ const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
 export default async function LoginPage(props: PageProps<"/login">) {
   const searchParams = await props.searchParams;
   const nextParam = searchParams.next;
-  const next = typeof nextParam === "string" ? nextParam : "/";
+  const next = typeof nextParam === "string" ? nextParam : "/sessions";
   const errorParam = searchParams.error;
   const googleError =
     typeof errorParam === "string" ? GOOGLE_ERROR_MESSAGES[errorParam] : undefined;

@@ -85,7 +85,7 @@ export async function requireUser(role?: Role): Promise<SessionPayload> {
     redirect("/login");
   }
   if (role && session.role !== role) {
-    redirect("/");
+    redirect("/sessions");
   }
   return session;
 }

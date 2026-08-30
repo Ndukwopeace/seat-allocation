@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Spinner } from "@/app/Spinner";
 import { YEAR_OPTIONS } from "@/lib/format";
 import { createExamSession, type ActionState } from "./actions";
@@ -8,17 +8,27 @@ import { createExamSession, type ActionState } from "./actions";
 const initialState: ActionState = {};
 
 export function CreateSessionForm() {
+  const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(
     createExamSession,
     initialState,
   );
 
-  return (
-    <details className="rounded-3xl border border-hairline bg-white shadow-sm">
-      <summary className="cursor-pointer px-4 py-4 text-base font-medium text-ink">
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="w-full rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white active:scale-[0.98]"
+      >
         + New exam
-      </summary>
-      <form action={formAction} className="flex flex-col gap-4 px-4 pb-4">
+      </button>
+    );
+  }
+
+  return (
+    <div className="rounded-3xl border border-hairline bg-white p-4 shadow-sm">
+      <form action={formAction} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <label htmlFor="year" className="text-sm font-medium text-ink">
             Year
@@ -103,15 +113,24 @@ export function CreateSessionForm() {
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={pending}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60"
-        >
-          {pending && <Spinner />}
-          {pending ? "Creating…" : "Create exam"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="flex-1 rounded-full border border-hairline bg-white px-4 py-3 text-sm font-medium text-ink"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={pending}
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-coral px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+          >
+            {pending && <Spinner />}
+            {pending ? "Creating…" : "Create exam"}
+          </button>
+        </div>
       </form>
-    </details>
+    </div>
   );
 }

@@ -19,11 +19,11 @@ export async function proxy(request: NextRequest) {
   }
 
   if (session && isPublicPath) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/sessions", request.url));
   }
 
   if (session && pathname.startsWith("/admin") && session.role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/sessions", request.url));
   }
 
   return NextResponse.next();
