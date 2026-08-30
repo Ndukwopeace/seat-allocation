@@ -114,6 +114,15 @@ export default async function SessionDetailPage(
 
       {allocation && <ExportPanel examSessionId={id} />}
 
+      {user.role === "ADMIN" && allocation && (
+        <Link
+          href={`/sessions/${id}/audit`}
+          className="text-center text-sm text-slate-500 underline"
+        >
+          View Audit History
+        </Link>
+      )}
+
       {allocation && <AllocationList examSessionId={id} rows={rows} />}
     </main>
   );
