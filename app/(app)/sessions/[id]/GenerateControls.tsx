@@ -31,18 +31,53 @@ function useSuccessFlash(
   }, [pending, state, onSuccess]);
 }
 
+function SeatsField({
+  studentCount,
+  totalSeats,
+}: {
+  studentCount: number;
+  totalSeats: number | null;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor="totalSeats" className="text-sm font-medium text-ink">
+        Seats in the room (optional)
+      </label>
+      <input
+        id="totalSeats"
+        name="totalSeats"
+        type="number"
+        inputMode="numeric"
+        min={studentCount}
+        placeholder={`${studentCount} (one seat per student)`}
+        defaultValue={totalSeats ?? ""}
+        className="w-full rounded-2xl border-none bg-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-coral/40"
+      />
+      <p className="text-xs text-muted">
+        Leave blank to seat all {studentCount} students in seats 1–
+        {studentCount} with no gaps. Set the room&rsquo;s real seat count to
+        spread them out across the empty seats too.
+      </p>
+    </div>
+  );
+}
+
 export function GenerateControls({
   examSessionId,
   hasAllocation,
   currentVersion,
   invigilatorRegenerationAvailable,
   userRole,
+  studentCount,
+  totalSeats,
 }: {
   examSessionId: string;
   hasAllocation: boolean;
   currentVersion: number;
   invigilatorRegenerationAvailable: boolean;
   userRole: "ADMIN" | "INVIGILATOR";
+  studentCount: number;
+  totalSeats: number | null;
 }) {
   // Both hooks are always called, whichever action is currently relevant —
   // that's what keeps the success signal alive across the moment
@@ -128,6 +163,7 @@ export function GenerateControls({
               This gives a random seat number to every student in this exam.
               Continue?
             </p>
+            <SeatsField studentCount={studentCount} totalSeats={totalSeats} />
             {genState.error && (
               <p role="alert" className="text-sm text-red-600">
                 {genState.error}
@@ -191,6 +227,7 @@ export function GenerateControls({
               the current one (v{currentVersion}). Every student gets a new
               seat number. You cannot undo this.
             </p>
+            <SeatsField studentCount={studentCount} totalSeats={totalSeats} />
             {requireReason && (
               <div className="flex flex-col gap-1.5">
                 <label

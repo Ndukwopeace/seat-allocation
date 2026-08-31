@@ -12,6 +12,7 @@ import {
   NotYetGeneratedError,
   RegenerationLimitReachedError,
   ConcurrentAllocationError,
+  NotEnoughSeatsError,
 } from "../lib/allocation";
 import {
   resetDb,
@@ -264,5 +265,106 @@ describe("allocation domain service", () => {
       where: { examSessionId: session.id },
     });
     assert.equal(allVersions.length, 2); // v1 generate + exactly one v2 regen
+  });
+
+  it("spreads students across a bigger room instead of packing seats 1..N when a seat count is given", async () => {
+    const admin = await makeUser("ADMIN");
+    const program = await makeProgram("Business");
+    await makeStudents(5, program.id);
+    const session = await makeExamSession();
+
+    await generateInitialAllocation(
+      session.id,
+      { id: admin.id, role: "ADMIN" },
+      50,
+    );
+
+    const active = await getActiveAllocation(session.id);
+    assert.ok(active);
+    const seatNumbers = active.seatAssignments.map((a) => a.seatNumber);
+    assert.equal(seatNumbers.length, 5);
+    assert.equal(new Set(seatNumbers).size, 5, "no two students share a seat");
+    for (const seat of seatNumbers) {
+      assert.ok(seat >= 1 && seat <= 50, `seat ${seat} is within the room`);
+    }
+    // With 50 seats for 5 students, the odds every seat happens to land in
+    // 1..5 are astronomically small — a real spread, not a coincidence.
+    assert.ok(
+      seatNumbers.some((seat) => seat > 5),
+      "at least one student sits outside the front-packed 1..5 block",
+    );
+
+    const session2 = await prisma.examSession.findUniqueOrThrow({
+      where: { id: session.id },
+    });
+    assert.equal(session2.totalSeats, 50, "the room size is remembered on the session");
+  });
+
+  it("rejects generation when there are more students than seats", async () => {
+    const admin = await makeUser("ADMIN");
+    const program = await makeProgram("Business");
+    await makeStudents(10, program.id);
+    const session = await makeExamSession();
+
+    await assert.rejects(
+      () =>
+        generateInitialAllocation(session.id, { id: admin.id, role: "ADMIN" }, 5),
+      NotEnoughSeatsError,
+    );
+  });
+
+  it("reuses the previously-set seat count on regenerate when none is given again", async () => {
+    const admin = await makeUser("ADMIN");
+    const program = await makeProgram("Business");
+    await makeStudents(4, program.id);
+    const session = await makeExamSession();
+
+    await generateInitialAllocation(
+      session.id,
+      { id: admin.id, role: "ADMIN" },
+      40,
+    );
+    await regenerateAllocation(
+      session.id,
+      { id: admin.id, role: "ADMIN" },
+      "Confirming the room size carries over",
+    );
+
+    const active = await getActiveAllocation(session.id);
+    assert.ok(active);
+    for (const a of active.seatAssignments) {
+      assert.ok(a.seatNumber >= 1 && a.seatNumber <= 40);
+    }
+  });
+
+  it("lets a regeneration replace the previously-set seat count with a new one", async () => {
+    const admin = await makeUser("ADMIN");
+    const program = await makeProgram("Business");
+    await makeStudents(4, program.id);
+    const session = await makeExamSession();
+
+    await generateInitialAllocation(
+      session.id,
+      { id: admin.id, role: "ADMIN" },
+      40,
+    );
+    await regenerateAllocation(
+      session.id,
+      { id: admin.id, role: "ADMIN" },
+      "Room changed to a smaller one",
+      4,
+    );
+
+    const active = await getActiveAllocation(session.id);
+    assert.ok(active);
+    const seatNumbers = active.seatAssignments.map((a) => a.seatNumber).sort(
+      (a, b) => a - b,
+    );
+    assert.deepEqual(seatNumbers, [1, 2, 3, 4]);
+
+    const session2 = await prisma.examSession.findUniqueOrThrow({
+      where: { id: session.id },
+    });
+    assert.equal(session2.totalSeats, 4);
   });
 });

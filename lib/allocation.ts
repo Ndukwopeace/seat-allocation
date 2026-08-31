@@ -64,6 +64,17 @@ export class MissingOverrideReasonError extends AllocationError {
   }
 }
 
+// The room's seat count (set explicitly, or carried over from a previous
+// generate/regenerate) must fit everyone on the roster — otherwise there's
+// nowhere to put the students the pool can't cover.
+export class NotEnoughSeatsError extends AllocationError {
+  constructor(seats: number, students: number) {
+    super(
+      `This session has ${students} student${students === 1 ? "" : "s"} but only ${seats} seat${seats === 1 ? "" : "s"}. Increase the seat count or remove students before generating.`,
+    );
+  }
+}
+
 // FR-ALL-10: two concurrent generate/regenerate requests for the same
 // session race to insert the same next version; the loser lands here.
 export class ConcurrentAllocationError extends AllocationError {
@@ -222,15 +233,20 @@ async function createAllocationVersion(params: {
   generatedById: string;
   overrideReason: string | null;
   studentIds: string[];
+  totalSeats: number;
   auditAction:
     | "ALLOCATION_GENERATED"
     | "ALLOCATION_REGENERATED"
     | "ALLOCATION_ADMIN_OVERRIDE";
   fromVersion: number | null;
 }) {
+  // Drawing from the full room (1..totalSeats) rather than always 1..N
+  // spreads students across empty seats instead of packing them into the
+  // front rows when the room is bigger than the class (totalSeats defaults
+  // to the student count, so this is a no-op unless someone raised it).
   const seatNumbers = shuffle(
-    Array.from({ length: params.studentIds.length }, (_, i) => i + 1),
-  );
+    Array.from({ length: params.totalSeats }, (_, i) => i + 1),
+  ).slice(0, params.studentIds.length);
 
   try {
     return await prisma.$transaction(async (tx) => {
@@ -252,6 +268,14 @@ async function createAllocationVersion(params: {
           studentId,
           seatNumber: seatNumbers[i],
         })),
+      });
+
+      // Remembers the resolved seat count on the session itself, so the
+      // next generate/regenerate (and the UI showing it) doesn't lose a
+      // value the caller didn't re-specify.
+      await tx.examSession.update({
+        where: { id: params.examSessionId },
+        data: { totalSeats: params.totalSeats },
       });
 
       await tx.auditLog.create({
@@ -276,12 +300,19 @@ async function createAllocationVersion(params: {
   }
 }
 
-/** FR-ALL-01/02/04: creates allocation version 1 for a session. */
+/**
+ * FR-ALL-01/02/04: creates allocation version 1 for a session.
+ * `requestedSeats`, when given, sets (and persists) the room's seat count
+ * for this generation — otherwise the session's last-used value is reused,
+ * falling back to exactly one seat per student (today's default) the very
+ * first time. Either way it must be enough for everyone on the roster.
+ */
 export async function generateInitialAllocation(
   examSessionId: string,
   actingUser: ActingUser,
+  requestedSeats?: number,
 ) {
-  await loadExamSessionOrThrow(examSessionId);
+  const examSession = await loadExamSessionOrThrow(examSessionId);
 
   const existing = await prisma.allocation.findFirst({
     where: { examSessionId },
@@ -291,6 +322,11 @@ export async function generateInitialAllocation(
   const population = await loadPopulation(examSessionId);
   if (population.length === 0) throw new EmptyPopulationError();
 
+  const totalSeats = requestedSeats ?? examSession.totalSeats ?? population.length;
+  if (totalSeats < population.length) {
+    throw new NotEnoughSeatsError(totalSeats, population.length);
+  }
+
   return createAllocationVersion({
     examSessionId,
     version: 1,
@@ -298,6 +334,7 @@ export async function generateInitialAllocation(
     generatedById: actingUser.id,
     overrideReason: null,
     studentIds: population.map((s) => s.id),
+    totalSeats,
     auditAction: "ALLOCATION_GENERATED",
     fromVersion: null,
   });
@@ -308,13 +345,16 @@ export async function generateInitialAllocation(
  * - Invigilators get exactly one regeneration per session, ever (BR-08/09).
  * - Admins may always regenerate, but every admin regeneration is an
  *   override and requires a non-empty `reason` (BR-10/BR-11).
+ * - `requestedSeats`, when given, replaces the room's seat count for this
+ *   regeneration (see generateInitialAllocation's doc for the fallback).
  */
 export async function regenerateAllocation(
   examSessionId: string,
   actingUser: ActingUser,
   reason?: string,
+  requestedSeats?: number,
 ) {
-  await loadExamSessionOrThrow(examSessionId);
+  const examSession = await loadExamSessionOrThrow(examSessionId);
 
   const history = await loadAllocationHistory(examSessionId);
   if (history.length === 0) throw new NotYetGeneratedError();
@@ -343,6 +383,11 @@ export async function regenerateAllocation(
   const population = await loadPopulation(examSessionId);
   if (population.length === 0) throw new EmptyPopulationError();
 
+  const totalSeats = requestedSeats ?? examSession.totalSeats ?? population.length;
+  if (totalSeats < population.length) {
+    throw new NotEnoughSeatsError(totalSeats, population.length);
+  }
+
   return createAllocationVersion({
     examSessionId,
     version: currentVersion + 1,
@@ -350,6 +395,7 @@ export async function regenerateAllocation(
     generatedById: actingUser.id,
     overrideReason,
     studentIds: population.map((s) => s.id),
+    totalSeats,
     auditAction,
     fromVersion: currentVersion,
   });

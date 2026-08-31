@@ -95,6 +95,7 @@ model ExamSession {
   date      DateTime  @db.Date
   startTime DateTime
   endTime   DateTime
+  totalSeats Int? // room capacity; null means "exactly one seat per student" (BR: FR-ALL default)
   createdAt DateTime  @default(now())
 
   allocations Allocation[]

@@ -115,16 +115,38 @@ function messageFor(err: unknown): string {
   throw err;
 }
 
+const MAX_SEATS = 2000;
+
+// A blank field means "use the existing/default seat count" — only a
+// non-blank value is validated and passed through as an override. Bounded
+// well above any real room so a stray extra digit can't ask for an absurd
+// shuffle.
+function parseTotalSeats(formData: FormData): { totalSeats?: number; error?: string } {
+  const raw = formData.get("totalSeats");
+  if (raw === null || raw === "") return {};
+
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1 || n > MAX_SEATS) {
+    return { error: `Seats must be a whole number between 1 and ${MAX_SEATS}.` };
+  }
+  return { totalSeats: n };
+}
+
 // FR-ALL-01/02/04. Either role may generate the first version.
 export async function generateAllocationAction(
   examSessionId: string,
+  _prevState: ActionState,
+  formData: FormData,
 ): Promise<ActionState> {
   const user = await requireUser();
+  const { totalSeats, error } = parseTotalSeats(formData);
+  if (error) return { error };
   try {
-    await generateInitialAllocation(examSessionId, {
-      id: user.sub,
-      role: user.role,
-    });
+    await generateInitialAllocation(
+      examSessionId,
+      { id: user.sub, role: user.role },
+      totalSeats,
+    );
   } catch (err) {
     return { error: messageFor(err) };
   }
@@ -141,11 +163,14 @@ export async function regenerateAllocationAction(
 ): Promise<ActionState> {
   const user = await requireUser();
   const reason = formData.get("reason");
+  const { totalSeats, error } = parseTotalSeats(formData);
+  if (error) return { error };
   try {
     await regenerateAllocation(
       examSessionId,
       { id: user.sub, role: user.role },
       typeof reason === "string" ? reason : undefined,
+      totalSeats,
     );
   } catch (err) {
     return { error: messageFor(err) };

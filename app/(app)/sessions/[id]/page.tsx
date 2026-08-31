@@ -85,6 +85,9 @@ export default async function SessionDetailPage(
             {formatDate(allocation.generatedAt)}
           </p>
         )}
+        {session.totalSeats != null && (
+          <p className="mt-1">Room: {session.totalSeats} seats</p>
+        )}
       </div>
 
       <div className="grid grid-cols-3 gap-3">
@@ -128,6 +131,8 @@ export default async function SessionDetailPage(
           regenStatus.invigilatorRegenerationAvailable
         }
         userRole={user.role}
+        studentCount={studentCount}
+        totalSeats={session.totalSeats}
       />
 
       {allocation && <ExportPanel examSessionId={id} />}
